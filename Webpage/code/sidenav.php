@@ -39,6 +39,10 @@
 		$type = get_all_by_id($conn, "type");
 		$vanus = get_all_by_id($conn, "age_group");
 		
+		usort($aastad, function($a, $b) {
+			return $b['name'] <=> $a['name'];
+		});
+		
 		$out = '<div id="mySidenav" class="sidenav"><a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>';
 		foreach($ained as &$aine){
 			$out .= '<button class="accordion">'.$aine['name'].'</button><div class="panel">';

@@ -59,7 +59,7 @@ function esialg($url,$ul,$nimi,$alanimi){
 	usort($sheet, function($a, $b) {
 		return $b[6] <=> $a[6];
         });}
-	$log .= "<center><h1>".$nimi."</h1><br><table>";
+	$log .= "<center><h1>".$nimi."</h1><br><table class='sortable'>";
 	$log .= "<tr><th>NIMI</th><th>KOOD</th>";
 	for($x=1; $x <= $ul;$x++){
 		$log .= "<th>".$x."</th>";

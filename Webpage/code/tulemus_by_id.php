@@ -18,7 +18,7 @@ function get_title($conn, $id){
 		}
 	}
 	
-	$out =  "<center><h1>".$Cname."<br>".$SCname."</h1><table>";
+	$out =  "<center><h1>".$Cname."<br>".$SCname."</h1><table class='sortable'>";
 	return $out;
 }
 
@@ -72,12 +72,12 @@ function tulemus($conn, $id){
 	$out = get_title($conn, $id);
 	
 	
-	$out.="<tr><th>Koht</th><th>Nimi</th><th>Klass</th><th>Kool</th><th>Juhendaja</th>";
+	$out.="<tr><th>Koht</th>";
+	$out.="<th>Nimi</th><th>Klass</th><th>Kool</th><th>Juhendaja</th>";
 	$tasksql = "SELECT * FROM subcontest_column where subcontest_id=".$id.";";
 	$taskresult = $conn->query($tasksql);
 	$nrTask = array();
 	if ($taskresult->num_rows > 0) {
-			// output data of each row
 			while($row = $taskresult->fetch_assoc()) {
 					$out .= "<th>".$row["name"]."</th>";
 					array_push($nrTask, $row["id"]);
@@ -94,13 +94,14 @@ function tulemus($conn, $id){
 	if ($CIresult->num_rows > 0) {
 			// output data of each row
 			while($row = $CIresult->fetch_assoc()) {
-					$out .= "<tr><th>".$row["placement"]."</th><th><a href='?name=".$nimed[$row["person_id"]]."'>".$nimed[$row["person_id"]]."</a></th>";
+					$out .= "<tr class='item'><th>".$row["placement"]."</th><th><a href='?name_id=".$row["person_id"]."'>".$nimed[$row["person_id"]]."</a></th>";
 					$out .= "<th>".$vanus[$row["age_group_id"]]."</th><th>".$kool[$row["school_id"]]."</th>";
 					$mentor = get_mentor($conn, $row["id"]);
 					$out .="<th>";
 					foreach ($mentor as &$men){
 						if(array_search($men, $mentor) > 0){$out .=" / ";}
-						$out .=$nimed[$men];
+						$out .="<a href='?name_id=".$men."'>";
+						$out .=$nimed[$men]."</a>";
 					}$out .="</th>";
 					foreach ($nrTask as &$ent){
 						$out .="<th>".$results[$ent][$row["id"]]."</th>";
