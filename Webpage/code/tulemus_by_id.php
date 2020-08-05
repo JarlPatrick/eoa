@@ -94,17 +94,17 @@ function tulemus($conn, $id){
 	if ($CIresult->num_rows > 0) {
 			// output data of each row
 			while($row = $CIresult->fetch_assoc()) {
-					$out .= "<tr class='item'><th>".$row["placement"]."</th><th><a href='?name_id=".$row["person_id"]."'>".$nimed[$row["person_id"]]."</a></th>";
-					$out .= "<th>".$vanus[$row["age_group_id"]]."</th><th>".$kool[$row["school_id"]]."</th>";
+					$out .= "<tr class='item'><td>".$row["placement"]."</td><td><a href='?name_id=".$row["person_id"]."'>".$nimed[$row["person_id"]]."</a></td>";
+					$out .= "<td>".$vanus[$row["age_group_id"]]."</td><td>".$kool[$row["school_id"]]."</td>";
 					$mentor = get_mentor($conn, $row["id"]);
-					$out .="<th>";
+					$out .="<td>";
 					foreach ($mentor as &$men){
 						if(array_search($men, $mentor) > 0){$out .=" / ";}
 						$out .="<a href='?name_id=".$men."'>";
 						$out .=$nimed[$men]."</a>";
-					}$out .="</th>";
+					}$out .="</td>";
 					foreach ($nrTask as &$ent){
-						$out .="<th>".$results[$ent][$row["id"]]."</th>";
+						$out .="<td>".$results[$ent][$row["id"]]."</td>";
 					}
 					$out .= "</tr>";
 			}
