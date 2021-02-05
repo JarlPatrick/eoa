@@ -16,7 +16,7 @@ function Fkood(){
 }
 
 function Mkood(){
-	$urlmata='https://docs.google.com/spreadsheets/d/e/2PACX-1vQC1iZ737LXNYQxUQaeW1O2D87AMClrSiw0pz0CzIhUKScOj8KhLiSxtLnT_jVeOoqBMgQ0ZsLX55rv/pub?output=csv&single=true&gid=354058744';
+	$urlmata='https://docs.google.com/spreadsheets/d/18AQhRiya1A1KBGD1CeOkty_pzYgeVCaZ5mjdp3Q-1Uk/export?format=csv&gid=1286121907';
 	if(!ini_set('default_socket_timeout', 15)) echo "<!-- unable to change socket timeout -->";
 	if (($handle = fopen($urlmata, "r")) !== FALSE) {
 	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -55,10 +55,10 @@ function esialg($url,$ul,$nimi,$alanimi){
 	usort($sheet, function($a, $b) {
 		return $b[13] <=> $a[13];
 	});}
-	if($ul+1==6){
+	if($ul+1==7){
 	usort($sheet, function($a, $b) {
-		return $b[6] <=> $a[6];
-        });}
+		return $b[7] <=> $a[7];
+    });}
 	$log .= "<center><h1>".$nimi."</h1><br><table class='sortable'>";
 	$log .= "<tr><th>NIMI</th><th>KOOD</th>";
 	for($x=1; $x <= $ul;$x++){

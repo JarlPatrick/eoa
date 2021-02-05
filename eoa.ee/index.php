@@ -1,13 +1,14 @@
 <?php
 
-$servername = "";
+$servername = "localhost";
 $username = "";
 $password = "";
-$dbname = "";
+$dbname = "eoa";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
+	echo 'fail';
     die("Connection failed: " . $conn->connect_error);
 }
 
@@ -31,9 +32,13 @@ if(!empty($queries['id'])){
 	if((int)$queries['id'] > 0 and (int)$queries['id'] < 10000){
 			echo tul_by_id\tulemus($conn,(int)$queries['id']);
 	}
-	/*if((int)$queries['id'] == 102){
-		$url2='https://docs.google.com/spreadsheets/d/e/2PACX-1vShKgIFQBM5JbzRBidk-2nkQI4k6EuEwVAWn-v-lPQqf47qQOV8BD44oXDB7CCeEvERndovD_DPRlQ-/pub?output=csv';
-		echo esialgsed\esialg($url2,5,"EMO LV 2020 9.klass Esialgsed","mata");
+	/*if((int)$queries['id'] == 10000){
+		$url2='https://docs.google.com/spreadsheets/d/e/2PACX-1vQsE0RId6TO33wjVXW_5I4rFbCuTn9lP7B02vEWRExfs5ZncIbPKlzuzydtWGRhf8z8uN-ZucoCCMIV/pub?output=csv';
+		echo esialgsed\esialg($url2,6,"EMO sügisene lahtine noorem (ESIALGSED)","mata");
+	}
+	if((int)$queries['id'] == 10001){
+		$url2='https://docs.google.com/spreadsheets/d/e/2PACX-1vQsE0RId6TO33wjVXW_5I4rFbCuTn9lP7B02vEWRExfs5ZncIbPKlzuzydtWGRhf8z8uN-ZucoCCMIV/pub?output=csv&single=true&gid=318187998';
+		echo esialgsed\esialg($url2,6,"EMO sügisene lahtine vanem (ESIALGSED)","mata");
 	}*/
 }elseif(!empty($queries['name'])){
 	echo name_s\search($conn, $queries['name']);
