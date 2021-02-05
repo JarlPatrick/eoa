@@ -53,7 +53,7 @@
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>1. KOHTI</th><th>2. KOHTI</th><th>3. KOHTI</th></tr>";
 		foreach($students as &$s){
 			if($s[3] + $s[4] + $s[5] > 0){
-				$out.="<tr><th><a href='?name_id=".$s[0]."'>".$s[1]."</a></th><th>".$s[2]."</th><th>".$s[3]."</th><th>".$s[4]."</th><th>".$s[5]."</th></tr>";
+				$out.="<tr><td><a href='?name_id=".$s[0]."'>".$s[1]."</a></td><td>".$s[2]."</td><td>".$s[3]."</td><td>".$s[4]."</td><td>".$s[5]."</td></tr>";
 			}
 		}
 		$out.="</table></center>";
