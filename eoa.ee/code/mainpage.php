@@ -39,8 +39,11 @@
 	}
 	
 	function this_year_results($conn){
-		$Cid = "1";
-		$out="<br><h2>Praeguse õppeaasta tulemused (2019/2020)</h2>";
+		$Cid = "54";
+		#$out="<br><h2>Mata sügisese lahtise ESIALGSED tulemused (2020)</h2>";
+		#$out.='<a href="?id=10000">NOOREM</a><br>';
+		#$out.='<a href="?id=10001">VANEM</a>';
+		$out.="<br><h2>Praeguse õppeaasta tulemused (2020/2021)</h2>";
 		$contests = get_table($conn, "contest", "WHERE year_id=".$Cid );
 		foreach($contests as &$c){
 			$out .="<h3>".$c['name']."</h3>";
