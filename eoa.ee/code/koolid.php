@@ -52,12 +52,12 @@
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>ÕPILASI</th><th>1. KOHTA</th><th>2. KOHTA</th><th>3. KOHTA</th></tr>";
 		foreach($koolid as &$k){
 			$conts=cont_by_school($conn, $k['id']);
-			$out.="<tr><th>".$k['name']."</th>";
-			$out.="<th>".count($conts)."</th>";
-			$out.="<th>".loe_unique($conts)."</th>";
-			$out.="<th>".count(cont_place_by_school($conn, $k['id'], "1"))."</th>";
-			$out.="<th>".count(cont_place_by_school($conn, $k['id'], "2"))."</th>";
-			$out.="<th>".count(cont_place_by_school($conn, $k['id'], "3"))."</th></tr>";
+			$out.="<tr><td>".$k['name']."</td>";
+			$out.="<td>".count($conts)."</td>";
+			$out.="<td>".loe_unique($conts)."</td>";
+			$out.="<td>".count(cont_place_by_school($conn, $k['id'], "1"))."</td>";
+			$out.="<td>".count(cont_place_by_school($conn, $k['id'], "2"))."</td>";
+			$out.="<td>".count(cont_place_by_school($conn, $k['id'], "3"))."</td></tr>";
 		}
 		$out.="</table></center>";
 		return $out;
