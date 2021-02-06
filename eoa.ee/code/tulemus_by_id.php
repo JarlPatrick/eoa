@@ -7,6 +7,7 @@ function get_title($conn, $id){
 		while($row = $result->fetch_assoc()) {
 			$Cid = $row["contest_id"];
 			$SCname = $row["name"];
+			$SCtasks_link = $row["tasks_link"];
 		}
 	}
 	
@@ -18,7 +19,11 @@ function get_title($conn, $id){
 		}
 	}
 	
-	$out =  "<center><h1>".$Cname."<br>".$SCname."</h1><table class='sortable'>";
+	$out =  "<center><h1>".$Cname."<br>".$SCname."</h1>";
+	if(!empty($SCtasks_link)){
+		$out .= "<h2><a href='".$SCtasks_link."'>Ülesanded</a></h2>";
+	}
+	$out .= "<table class='sortable'>";
 	return $out;
 }
 
