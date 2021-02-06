@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> Eesti Olümpiaadide Andmebaas</title>
-<meta name="google-site-verification" content="m3yEMb5b8lxEu4ueaXfeF4SYYjskkfaMiyVRUtXvEHE" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
+    <meta charset="UTF-8">
+    <title>Eesti Olümpiaadide Andmebaas</title>
+    <meta name="google-site-verification" content=
+    "m3yEMb5b8lxEu4ueaXfeF4SYYjskkfaMiyVRUtXvEHE">
+    <meta name="viewport" content=
+    "width=device-width, initial-scale=1">
+    <style>
     table, th, td {
         border: 1px solid black;
         margin-top: 20px
@@ -37,7 +39,7 @@
         text-decoration: none;
         color: black;
     }
-    
+
 
     /* The navigation menu links */
     .sidenav a {
@@ -66,7 +68,7 @@
         display: block;
         transition: 0.3s;
     }
-	
+
 
     /* When you mouse over the navigation links, change their color */
     .sidenav a:hover {
@@ -212,9 +214,9 @@
     }
 
 
-</style>
-<script src="sorttable.js" type="text/javascript"></script>
-<script>
+    </style>
+    <script src="sorttable.js" type="text/javascript"></script>
+    <script>
 
     function findperson(){
         if (document.getElementById('NIF').value != '') {
@@ -240,9 +242,9 @@
         document.getElementById("mySidenav").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
     }
-	
-	function initnav(){
-		var acc = document.getElementsByClassName("accordion");
+
+        function initnav(){
+                var acc = document.getElementsByClassName("accordion");
         var i;
         for (i = 0; i < acc.length; i++) {
             acc[i].addEventListener("click", function () {
@@ -259,31 +261,26 @@
                 }
             });
         }
-	}
-    
+        }
 
-</script>
+
+    </script>
 </head>
 <body>
-
-
-   
-
-    
     <div id="main">
         <div class="topnav">
             <a onclick="openNav()">
-                <div class="manubtn"></div>
-                <div class="manubtn"></div>
-                <div class="manubtn"></div>
-            </a>
-            <h1><a href="http://eoa.ee/">EESTI OLÜMPIAADIDE ANDMEBAAS</a></h1>
-			<h1><a href="http://eoa.ee/?kool=true">KOOLID</a></h1>
-			<h1><a href="http://eoa.ee/?hof=true">AUTABEL</a></h1>
+            <div class="manubtn"></div>
+            <div class="manubtn"></div>
+            <div class="manubtn"></div></a>
+            <h1><a href="http://eoa.ee/">EESTI OLÜMPIAADIDE
+            ANDMEBAAS</a></h1>
+            <h1><a href="http://eoa.ee/?kool=true">KOOLID</a></h1>
+            <h1><a href="http://eoa.ee/?hof=true">AUTABEL</a></h1>
             <div class="search-container">
-                <button type="button" onclick="findperson()">OTSI</button>
-                <input type="text" placeholder="Õpilase/Juhendaja nimi..." name="nameinput" id="NIF" onkeydown="search(this)">
+                <button type="button" onclick=
+                "findperson()">OTSI</button> <input type="text"
+                placeholder="Õpilase/Juhendaja nimi..." name=
+                "nameinput" id="NIF" onkeydown="search(this)">
             </div>
         </div>
-
-
