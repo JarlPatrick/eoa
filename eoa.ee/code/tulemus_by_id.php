@@ -94,7 +94,7 @@ function tulemus($conn, $id){
 	$out.="</tr>";
 	
 	
-	$CIsql = "SELECT * FROM contestant where subcontest_id=".$id.";";
+	$CIsql = "SELECT * FROM contestant where subcontest_id=".$id." order by isnull(placement), placement;";
 	$CIresult = $conn->query($CIsql);
 	if ($CIresult->num_rows > 0) {
 			// output data of each row
