@@ -62,7 +62,7 @@ function result_line_ment($conn, $p){
 	$type = get_table($conn, "type", "id", $cont["type_id"])[0];
 	$year = get_table($conn, "year", "id", $cont["year_id"])[0];
 	$age_group = get_table($conn, "age_group", "id", $subcont["age_group_id"])[0];
-	$out = "<tr><td>".$name."</td><td>".$subject["name"]."</td><td>".$type["name"]."</td><td>".$year["name"]."</td><td>".$age_group["name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$subcont["id"]."'>Link</a></td></tr>";
+	$out = "<tr><td><a href='/?name_id=".$p["person_id"]."'>".$name."</a></td><td>".$subject["name"]."</td><td>".$type["name"]."</td><td>".$year["name"]."</td><td>".$age_group["name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$subcont["id"]."'>Link</a></td></tr>";
 	return $out;
 }
 
