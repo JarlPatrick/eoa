@@ -1,3 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Eesti Olümpiaadide Andmebaas</title>
+    <meta name="google-site-verification" content=
+    "m3yEMb5b8lxEu4ueaXfeF4SYYjskkfaMiyVRUtXvEHE">
+    <meta name="viewport" content=
+    "width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/eoa.css">
+    <script src="sorttable.js" type="text/javascript"></script>
+    <script>
+
+    function findperson(){
+        if (document.getElementById('NIF').value != '') {
+            var address = '/?name=' + document.getElementById('NIF').value;
+            location.href = address;
+        }
+    }
+
+    function search(ele) {
+        if (event.key === 'Enter') {
+            findperson();
+        }
+    }
+
+    /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "400px";
+        document.getElementById("main").style.marginLeft = "400px";
+    }
+
+    /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+
+	function initnav(){
+			var acc = document.getElementsByClassName("accordion");
+	var i;
+	for (i = 0; i < acc.length; i++) {
+		acc[i].addEventListener("click", function () {
+			/* Toggle between adding and removing the "active" class,
+			to highlight the button that controls the panel */
+			this.classList.toggle("active");
+
+			/* Toggle between hiding and showing the active panel */
+			var panel = this.nextElementSibling;
+			if (panel.style.display === "block") {
+				panel.style.display = "none";
+			} else {
+				panel.style.display = "block";
+			}
+		});
+	}
+	}
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div class="topnav">
+            <a onclick="openNav()">
+            <div class="manubtn"></div>
+            <div class="manubtn"></div>
+            <div class="manubtn"></div></a>
+            <h1><a href="/">EESTI OLÜMPIAADIDE
+            ANDMEBAAS</a></h1>
+            <h1><a href="/?kool=true">KOOLID</a></h1>
+            <h1><a href="/?hof=true">AUTABEL</a></h1>
+            <div class="search-container">
+                <button type="button" onclick=
+                "findperson()">OTSI</button> <input type="text"
+                placeholder="Õpilase/Juhendaja nimi..." name=
+                "nameinput" id="NIF" onkeydown="search(this)">
+            </div>
+        </div>
+
 <?php
 
 $servername = "localhost";
@@ -11,10 +89,6 @@ if ($conn->connect_error) {
 	echo 'fail';
     die("Connection failed: " . $conn->connect_error);
 }
-
-$myfile = fopen("main.html","r") or die ("error");
-echo fread($myfile,filesize("main.html"));
-fclose($myfile);
 
 require('code/esialgsed.php');
 require('code/tulemus_by_id.php');
@@ -56,7 +130,7 @@ if(!empty($queries['id'])){
 
 $conn->close();
 
-
-echo "</body></html>";
-
 ?>
+    </div>
+</body>
+</html>
