@@ -78,10 +78,7 @@
 
 <?php
 
-$servername = "localhost";
-$username = "";
-$password = "";
-$dbname = "eoa";
+include 'credentials.php';
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
