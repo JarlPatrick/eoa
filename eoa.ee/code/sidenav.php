@@ -45,11 +45,11 @@
 		
 		$out = '<div id="mySidenav" class="sidenav"><a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>';
 		foreach($ained as &$aine){
-			$out .= '<button class="accordion">'.$aine['name'].'</button><div class="panel">';
+			$out .= '<button class="accordion">'.$aine['name'].'</button><div class="panel" id="s'.$aine['id'].'">';
 			foreach($aastad as &$aasta){
 				$comps = get_table($conn, "contest", "WHERE subject_id=".$aine['id']." AND year_id=".$aasta['id'] );
 				if(count($comps) > 0){
-					$out .= '<button class="accordion">'.$aasta['name'].'</button><div class="panel">';
+					$out .= '<button class="accordion">'.$aasta['name'].'</button><div class="panel" id="s'.$aine['id'].'y'.$aasta['id'].'">';
 					foreach($comps as &$comp){
 						$out .= '<h1>'.$type[$comp['type_id']].'</h1>';
 						$subcomps = get_table($conn, "subcontest", "WHERE contest_id=".$comp['id'] );
