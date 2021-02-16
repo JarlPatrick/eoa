@@ -3,24 +3,25 @@
 function name_by_id($conn, $n_id) {
 	$sql = "SELECT * FROM person WHERE id=".$n_id.";";
 	$result = $conn->query($sql);
+	$name = "";
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			$nimi = $row["name"];
+			$name = $row["name"];
 		}
 	}
-	return $nimi;
+	return $name;
 }
 
-function id_by_name($conn, $name) {
-	$sql = "SELECT * FROM person WHERE name LIKE '%".$name."%';";
+function find_by_name($conn, $name) {
+	$sql = "SELECT id, name FROM person WHERE name LIKE '%".$conn->real_escape_string($name)."%';";
 	$result = $conn->query($sql);
-	$nimed = array();
+	$names = array();
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			$nimed[$row["id"]] = $row["name"];
+			$names[$row["id"]] = $row["name"];
 		}
 	}
-	return $nimed;
+	return $names;
 }
 
 function multi_name($nimed, $nimi){
@@ -31,63 +32,63 @@ function multi_name($nimed, $nimi){
 	return $out;
 }
 
-function get_table($conn, $tbname, $scpar, $scind){
-	$sql = "SELECT * FROM ".$tbname." WHERE ".$scpar."=".$scind.";";
+function get_participations($conn, $id){
+	$sql = "SELECT placement, s_name, t_name, y_name, a_name, sc_id
+		FROM contestant co
+		INNER JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
+		WHERE co.person_id = $id
+		ORDER BY y_name DESC, sc_id DESC;";
+
 	$result = $conn->query($sql);
-	$out = array();
+	$participations = array();
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			array_push($out, $row);
+			array_push($participations, $row);
 		}
 	}
-	return $out;
+	return $participations;
 }
 
-function result_line_stud($conn, $p){
-	$subcont = get_table($conn, "subcontest", "id", $p["subcontest_id"])[0];
-	$cont = get_table($conn, "contest", "id", $subcont["contest_id"])[0];
-	$subject = get_table($conn, "subject", "id", $cont["subject_id"])[0];
-	$type = get_table($conn, "type", "id", $cont["type_id"])[0];
-	$year = get_table($conn, "year", "id", $cont["year_id"])[0];
-	$age_group = get_table($conn, "age_group", "id", $subcont["age_group_id"])[0];
-	$out = "<tr><td>".$subject["name"]."</td><td>".$type["name"]."</td><td>".$year["name"]."</td><td>".$age_group["name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$subcont["id"]."'>Link</a></td></tr>";
-	return $out;
+function get_mentees($conn, $id){
+	$sql = "SELECT p.id m_id, p.name m_name, s_name, t_name, y_name, a_name, placement, sc_id
+		FROM mentor m
+		INNER JOIN contestant co ON co.id = m.contestant_id
+		INNER JOIN person p ON p.id = co.person_id
+		INNER JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
+		WHERE m.mentor_id = $id
+		ORDER BY y_name DESC, sc_id DESC;";
+	$result = $conn->query($sql);
+	$mentees = array();
+	if($result->num_rows > 0) {
+		while($row = $result->fetch_assoc()) {
+			array_push($mentees, $row);
+		}
+	}
+	return $mentees;
 }
 
-function result_line_ment($conn, $p){
-	$name = name_by_id($conn, $p["person_id"]);
-	$subcont = get_table($conn, "subcontest", "id", $p["subcontest_id"])[0];
-	$cont = get_table($conn, "contest", "id", $subcont["contest_id"])[0];
-	$subject = get_table($conn, "subject", "id", $cont["subject_id"])[0];
-	$type = get_table($conn, "type", "id", $cont["type_id"])[0];
-	$year = get_table($conn, "year", "id", $cont["year_id"])[0];
-	$age_group = get_table($conn, "age_group", "id", $subcont["age_group_id"])[0];
-	$out = "<tr><td><a href='/?name_id=".$p["person_id"]."'>".$name."</a></td><td>".$subject["name"]."</td><td>".$type["name"]."</td><td>".$year["name"]."</td><td>".$age_group["name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$subcont["id"]."'>Link</a></td></tr>";
-	return $out;
-}
-
-function single_name($conn, $n_id){
-	$nimi = name_by_id($conn,$n_id);
-	$out="<center><br><h1>".$nimi." profiil </h1><br>";
-	$contestant=get_table($conn, "contestant", "person_id", $n_id);
-	$mentor=get_table($conn, "mentor", "mentor_id", $n_id);
+function person_profile($conn, $id){
+	$name = name_by_id($conn, $id);
+	if($name == "") {
+		return;
+	}
 	
-	if(count($contestant)>0){
-		$out.= "<h2>Osalemised (".count($contestant).")</h2>";
+	$out="<center><br><h1>".$name." profiil </h1><br>";
+	$mentees=get_mentees($conn, $id);
+	$participations = get_participations($conn, $id);
+	if(count($participations)>0){
+		$out.= "<h2>Osalemised (".count($participations).")</h2>";
 		$out.="<table class='sortable'><tr><th>Ala</th><th>Tüüp</th><th>Aasta</th><th>Vanuseklass</th><th>Koht</th><th>Link</th></tr>";
-		foreach ($contestant as $p){
-			$out.= result_line_stud($conn, $p);
+		foreach ($participations as $p){
+			$out.= "<tr><td>".$p["s_name"]."</td><td>".$p["t_name"]."</td><td>".$p["y_name"]."</td><td>".$p["a_name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$p["sc_id"]."'>Link</a></td></tr>";
 		}
 		$out.= "</table>";
 	}
-	if(count($mentor)>0){
-		$out.="<h2>Juhendused (".count($mentor).")</h2>";
+	if(count($mentees)>0){
+		$out.="<h2>Juhendused (".count($mentees).")</h2>";
 		$out.="<table class='sortable'><tr><th>Õpilase nimi</th><th>Ala</th><th>Tüüp</th><th>Aasta</th><th>Vanuseklass</th><th>Koht</th><th>Link</th></tr>";
-		foreach ($mentor as $m){
-			$contestant=get_table($conn, "contestant", "id", $m["contestant_id"]);
-			foreach ($contestant as $p){
-				$out.= result_line_ment($conn, $p);
-			}
+		foreach ($mentees as $m){
+			$out.= "<tr><td><a href='/?name_id=".$m["m_id"]."'>".$m["m_name"]."</a></td><td>".$m["s_name"]."</td><td>".$m["t_name"]."</td><td>".$m["y_name"]."</td><td>".$m["a_name"]."</td><td>".$m["placement"]."</td><td><a href='?id=".$m["sc_id"]."'>Link</a></td></tr>";
 		}
 		$out.= "</table>";
 	}
@@ -95,13 +96,12 @@ function single_name($conn, $n_id){
 }
 
 function search($conn, $name){
-	$nimed = id_by_name($conn, $name);
-	if(count($nimed) >1){
-		return multi_name($nimed,$name);
-	}
-	if(count($nimed) == 1){
-		foreach ($nimed as $id=>$name){
-			return single_name($conn, $id);
+	$names = find_by_name($conn, $name);
+	if(count($names) > 1){
+		return multi_name($names,$name);
+	} elseif(count($names) == 1){
+		foreach ($names as $id=>$name){
+			return person_profile($conn, $id);
 		}
 	}
 }
