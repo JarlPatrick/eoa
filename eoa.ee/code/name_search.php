@@ -78,17 +78,43 @@ function person_profile($conn, $id){
 	$participations = get_participations($conn, $id);
 	if(count($participations)>0){
 		$out.= "<h2>Osalemised (".count($participations).")</h2>";
-		$out.="<table class='sortable'><tr><th>Ala</th><th>Tüüp</th><th>Aasta</th><th>Vanuseklass</th><th>Koht</th><th>Link</th></tr>";
+		
+		$out.="<table class='sortable'><tr>";
+		$out .= "<th>Ala</th>";
+		$out .= "<th>Tüüp</th>";
+		$out .= "<th>Aasta</th>";
+		$out .= "<th>Vanuseklass</th>";
+		$out .= "<th>Koht</th>";
+		$out .= "<th>Link</th></tr>";
 		foreach ($participations as $p){
-			$out.= "<tr><td>".$p["s_name"]."</td><td>".$p["t_name"]."</td><td>".$p["y_name"]."</td><td>".$p["a_name"]."</td><td>".$p["placement"]."</td><td><a href='?id=".$p["sc_id"]."'>Link</a></td></tr>";
+			$out .= "<tr><td>".$p["s_name"]."</td>";
+			$out .= "<td>".$p["t_name"]."</td>";
+			$out .= "<td>".$p["y_name"]."</td>";
+			$out .= "<td>".$p["a_name"]."</td>";
+			$out .= "<td>".$p["placement"]."</td>";
+			$out .= "<td><a href='?id=".$p["sc_id"]."'>Link</a></td></tr>";
 		}
 		$out.= "</table>";
 	}
 	if(count($mentees)>0){
-		$out.="<h2>Juhendused (".count($mentees).")</h2>";
-		$out.="<table class='sortable'><tr><th>Õpilase nimi</th><th>Ala</th><th>Tüüp</th><th>Aasta</th><th>Vanuseklass</th><th>Koht</th><th>Link</th></tr>";
+		$out .= "<h2>Juhendused (".count($mentees).")</h2>";
+		
+		$out .= "<table class='sortable'><tr>";
+		$out .= "<th>Õpilase nimi</th>";
+		$out .= "<th>Ala</th>";
+		$out .= "<th>Tüüp</th>";
+		$out .= "<th>Aasta</th>";
+		$out .= "<th>Vanuseklass</th>";
+		$out .= "<th>Koht</th>";
+		$out .= "<th>Link</th></tr>";
 		foreach ($mentees as $m){
-			$out.= "<tr><td><a href='/?name_id=".$m["m_id"]."'>".$m["m_name"]."</a></td><td>".$m["s_name"]."</td><td>".$m["t_name"]."</td><td>".$m["y_name"]."</td><td>".$m["a_name"]."</td><td>".$m["placement"]."</td><td><a href='?id=".$m["sc_id"]."'>Link</a></td></tr>";
+			$out .="<tr><td><a href='/?name_id=".$m["m_id"]."'>".$m["m_name"]."</a></td>";
+			$out .= "<td>".$m["s_name"]."</td>";
+			$out .= "<td>".$m["t_name"]."</td>";
+			$out .= "<td>".$m["y_name"]."</td>";
+			$out .= "<td>".$m["a_name"]."</td>";
+			$out .= "<td>".$m["placement"]."</td>";
+			$out .= "<td><a href='?id=".$m["sc_id"]."'>Link</a></td></tr>";
 		}
 		$out.= "</table>";
 	}
