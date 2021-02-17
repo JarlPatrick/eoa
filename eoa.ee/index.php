@@ -115,7 +115,7 @@ if(!empty($queries['id'])){
 	echo name_s\search($conn, $queries['name']);
 }elseif(!empty($queries['name_id'])){
 	if((int)$queries['name_id'] > 0 and (int)$queries['name_id'] < 10000){
-		echo name_s\single_name($conn, $queries['name_id']);
+		echo name_s\person_profile($conn, $queries['name_id']);
 	}
 }elseif(!empty($queries['kool'])){
 	echo koolid\sum_kool($conn);
