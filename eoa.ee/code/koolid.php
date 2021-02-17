@@ -21,6 +21,9 @@
 		$koolid = get_schools($conn);
 		$out="<center><table class='sortable'>";
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>ÕPILASI</th><th>1. KOHTA</th><th>2. KOHTA</th><th>3. KOHTA</th></tr>";
+		
+		usort($koolid, function($a, $b) {	return $b['participations'] <=> $a['participations'];	});
+		
 		foreach($koolid as &$k){
 			$out.="<tr><td>".$k['name']."</td>";
 			$out.="<td>".$k['participations']."</td>";
