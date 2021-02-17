@@ -135,6 +135,7 @@ require('code/sidenav.php');
 require('code/mainpage.php');
 require('code/koolid.php');
 require('code/hof.php');
+require('code/school_profile.php');
 
 echo sidenav\get_sidenav($conn);
 
@@ -162,6 +163,10 @@ if(!empty($queries['id'])){
 	echo koolid\sum_kool($conn);
 }elseif(!empty($queries['hof'])){
 	echo hof\hof($conn);
+}elseif(!empty($queries['school_id'])){
+	if((int)$queries['school_id'] > 0 and (int)$queries['school_id'] < 10000){
+		echo school_profile\get_profile($conn, $queries['school_id']);
+	}
 }else{
 	echo mainpage\get_mainpage($conn);
 }

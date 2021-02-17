@@ -97,7 +97,7 @@ function person_profile($conn, $id){
 		$out.= "</table>";
 	}
 	if(count($mentees)>0){
-		$out .= "<h2>Juhendused (".count($mentees).")</h2>";
+		$out .= "<h2>Juhendamised (".count($mentees).")</h2>";
 		
 		$out .= "<table class='sortable'><tr>";
 		$out .= "<th>Õpilase nimi</th>";
