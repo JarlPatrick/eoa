@@ -5,7 +5,8 @@
 				count(case when contestant.placement = 1 then 1 end) place1,
 				count(case when contestant.placement = 2 then 1 end) place2,
 				count(case when contestant.placement = 3 then 1 end) place3
-			FROM school INNER JOIN contestant ON contestant.school_id = school.id GROUP BY school.id;";
+			FROM school INNER JOIN contestant ON contestant.school_id = school.id GROUP BY school.id
+			ORDER BY participations DESC, place1 + place2 + place3 DESC, place1 DESC, place2 DESC, place3 DESC;";
 		$result = $conn->query($sql);
 		$nimed = array();
 		if ($result->num_rows > 0) {
