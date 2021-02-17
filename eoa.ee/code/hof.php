@@ -1,60 +1,29 @@
 <?php namespace hof {	
-	function all_names($conn) {
-		$sql = "SELECT * FROM person;";
+	function get_students($conn) {
+		$sql = "SELECT person.id id, person.name name, COUNT(*) participations,
+				COUNT(CASE WHEN contestant.placement = 1 THEN 1 END) place1,
+				COUNT(CASE WHEN contestant.placement = 2 THEN 1 END) place2,
+				COUNT(CASE WHEN contestant.placement = 3 THEN 1 END) place3
+			FROM person INNER JOIN contestant ON contestant.person_id = person.id GROUP BY person.id
+			HAVING place1 + place2 + place3 > 0 OR participations >= 8
+			ORDER BY participations DESC, place1 + place2 + place3 DESC, place1 DESC, place2 DESC, place3 DESC;";
 		$result = $conn->query($sql);
-		$nimi = array();
+		$students = array();
 		if ($result->num_rows > 0) {
 			while($row = $result->fetch_assoc()) {
-				$nimi[$row['id']] = $row["name"];
+				array_push($students, $row);
 			}
 		}
-		return $nimi;
-	}
-	
-	function all_conts($conn) {
-		$sql = "SELECT * FROM contestant;";
-		$result = $conn->query($sql);
-		$out = array();
-		if ($result->num_rows > 0) {
-			while($row = $result->fetch_assoc()) {
-				array_push($out, $row);
-			}
-		}
-		return $out;
+		return $students;
 	}
 	
 	function hof($conn){
-		$nimed = all_names($conn);
-		$conts = all_conts($conn);
-		$students = array();
-		
-		
-		foreach($conts as &$c){
-			$students[$c['person_id']][0]=$c['person_id'];
-			$students[$c['person_id']][1]=$nimed[$c['person_id']];
-			
-			if(isset($students[$c['person_id']][2])){	$students[$c['person_id']][2]+=1;
-			}else{	$students[$c['person_id']][2]=1;	}
-			
-			if(!isset($students[$c['person_id']][3])){	$students[$c['person_id']][3]=0;	}			
-			if($c['placement'] == 1){	$students[$c['person_id']][3]+=1;	}
-			
-			if(!isset($students[$c['person_id']][4])){	$students[$c['person_id']][4]=0;	}			
-			if($c['placement'] == 2){	$students[$c['person_id']][4]+=1;	}
-			
-			if(!isset($students[$c['person_id']][5])){	$students[$c['person_id']][5]=0;	}			
-			if($c['placement'] == 3){	$students[$c['person_id']][5]+=1;	}
-			
-		}
-		
-		usort($students, function($a, $b) {	return $b[3] <=> $a[3];	});
+		$students = get_students($conn);
 		
 		$out="<center><table class='sortable'>";
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>1. KOHTI</th><th>2. KOHTI</th><th>3. KOHTI</th></tr>";
 		foreach($students as &$s){
-			if($s[3] + $s[4] + $s[5] > 0){
-				$out.="<tr><td><a href='?name_id=".$s[0]."'>".$s[1]."</a></td><td>".$s[2]."</td><td>".$s[3]."</td><td>".$s[4]."</td><td>".$s[5]."</td></tr>";
-			}
+			$out.="<tr><td><a href='?name_id=".$s["id"]."'>".$s["name"]."</a></td><td>".$s["participations"]."</td><td>".$s["place1"]."</td><td>".$s["place2"]."</td><td>".$s["place3"]."</td></tr>";
 		}
 		$out.="</table></center>";
 		return $out;
