@@ -100,7 +100,7 @@ function tulemus($conn, $id){
 			// output data of each row
 			while($row = $CIresult->fetch_assoc()) {
 					$out .= "<tr class='item'><td>".$row["placement"]."</td><td><a href='?name_id=".$row["person_id"]."'>".$nimed[$row["person_id"]]."</a></td>";
-					$out .= "<td>".$vanus[$row["age_group_id"]]."</td><td>".$kool[$row["school_id"]]."</td>";
+					$out .= "<td>".$vanus[$row["age_group_id"]]."</td><td><a href='?school_id=".$row["school_id"]."'>".$kool[$row["school_id"]]."</a></td>";
 					$mentor = get_mentor($conn, $row["id"]);
 					$out .="<td>";
 					foreach ($mentor as &$men){
