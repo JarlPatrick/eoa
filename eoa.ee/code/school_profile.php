@@ -62,7 +62,7 @@
 		foreach ($conts as $c){
 			if(empty($student[$c['person_id']])){
 				$student[$c['person_id']][0] = 1;
-				$student[$c['person_id']][1] = $names[$c['person_id']];
+				$student[$c['person_id']][1] = $c['person_id'];
 			} else {
 				$student[$c['person_id']][0] += 1;
 			}
@@ -72,7 +72,7 @@
 		foreach ($mentors_ids as $m){
 			if(empty($mentors[$m['mentor_id']])){
 				$mentors[$m['mentor_id']][0] = 1;
-				$mentors[$m['mentor_id']][1] = $names[$m['mentor_id']];
+				$mentors[$m['mentor_id']][1] = $m['mentor_id'];
 			} else {
 				$mentors[$m['mentor_id']][0] += 1;
 			}
@@ -85,13 +85,13 @@
 		$out.= "<tr><th>Juhendaja</th><th>Juhendamisi</th></tr>";
 		usort($mentors, function($a, $b) {	return $b[0] <=> $a[0];	});
 		foreach ($mentors as $id=>$m){
-			$out.="<tr><td>".$m[1]."</td><td>".$m[0]."</td></tr>";
+			$out.="<tr><td><a href='?name_id=".$m[1]."'>".$names[$m[1]]."</a></td><td>".$m[0]."</td></tr>";
 		}
 		$out.="</table><table style='float: right'>";
 		$out.= "<tr><th>Õpilane</th><th>Osalemisi</th></tr>";
 		usort($student, function($a, $b) {	return $b[0] <=> $a[0];	});
 		foreach ($student as $id=>$s){
-			$out.="<tr><td>".$s[1]."</td><td>".$s[0]."</td></tr>";
+			$out.="<tr><td><a href='?name_id=".$s[1]."'>".$names[$s[1]]."</a></td><td>".$s[0]."</td></tr>";
 		}
 		$out.="</table></div>";
 		
