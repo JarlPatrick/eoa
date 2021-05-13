@@ -20,7 +20,8 @@
 	function hof($conn){
 		$students = get_students($conn);
 		
-		$out="<center><table class='sortable'>";
+		$out="<center><h1>Enim olümpiaadidest osa võtnud õpilased:</h1>";
+		$out.="<table class='sortable'>";
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>1. KOHTI</th><th>2. KOHTI</th><th>3. KOHTI</th></tr>";
 		foreach($students as &$s){
 			$out.="<tr><td><a href='?name_id=".$s["id"]."'>".$s["name"]."</a></td><td>".$s["participations"]."</td><td>".$s["place1"]."</td><td>".$s["place2"]."</td><td>".$s["place3"]."</td></tr>";
