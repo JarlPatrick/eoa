@@ -92,7 +92,7 @@ $conn->close();
       <div id="footer">
         <hr>
         Eesti Olümpiaadide Andmebaas
-        <a style="float: right" href="mailto:eoa@eoa.ee">Kontakt: eoa@eoa.ee</a>
+        <a style="float: right" href="mailto:eoakontakt@gmail.com">Kontakt: eoakontakt@gmail.com</a>
       </div>
     </div>
   </body>
