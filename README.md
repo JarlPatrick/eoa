@@ -13,7 +13,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Support
 
-For help contact <eoa@eoa.ee>.
+For help contact <eoakontakt@gmail.com>.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
