@@ -23,7 +23,7 @@ function get_title($conn, $id){
 	if(!empty($SCtasks_link)){
 		$out .= "<h2><a href='".$SCtasks_link."'>Ülesanded</a></h2>";
 	}
-	$out .= "<table class='sortable'>";
+	$out .= '<div style="overflow-x:auto;"><table class="sortable">';
 	return $out;
 }
 
@@ -114,7 +114,7 @@ function tulemus($conn, $id){
 					$out .= "</tr>";
 			}
 	}
-	$out .= "</table></center>";
+	$out .= "</table></div></center>";
 	
 	return $out;
 
