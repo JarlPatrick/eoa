@@ -31,7 +31,8 @@ specialMap = {
     'KL': 'class',
     'JUHENDAJA': 'instructors',
     'JUHENDAJAD': 'instructors',
-    'ÕPETAJA': 'instructors'
+    'ÕPETAJA': 'instructors',
+    'ÕPETAJAD': 'instructors',
 }
 
 def specialKey(s):
