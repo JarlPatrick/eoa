@@ -7,6 +7,10 @@
                 "m3yEMb5b8lxEu4ueaXfeF4SYYjskkfaMiyVRUtXvEHE">
     <meta name="viewport" content=
                 "width=device-width, initial-scale=1">
+<?php
+if($_SERVER['REQUEST_URI'] != '/')
+    echo '<meta name="robots" content="noindex">';
+?>
     <link rel="stylesheet" href="/eoa.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="sorttable.js" type="text/javascript"></script>
