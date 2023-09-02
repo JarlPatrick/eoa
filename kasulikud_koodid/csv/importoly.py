@@ -96,7 +96,7 @@ def addContestant(contestant, subcontestId, columnIds):
                          person_id = str(personId),
                          age_group_id = ageGroupId,
                          school_id = str(schoolId),
-                         placement = contestant['placement'])
+                              placement = contestant['placement'].strip() or None if contestant['placement'] else None)
 
     # Create fields for contestant
     for c, v in zip(columnIds, contestant['fields']):
@@ -120,14 +120,15 @@ Add a subcontest
 Expects a dictionary containing:
   * 'name'
   * 'class_range'
+  * class_range_name
   * 'columns'
   * 'contestants'
 and the parent contest's id
 """
 def addSubcontest(subcontest, contestId):
     # Get age group
-    # Note: creation of a new group *will* fail due to a missing name
     ageGroupId = getMakeRow('age_group',
+                       name = subcontest['class_range_name'],
                        min_class = str(subcontest['class_range'][0]),
                        max_class = str(subcontest['class_range'][1]))
     
