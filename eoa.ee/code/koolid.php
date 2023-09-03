@@ -32,4 +32,4 @@
 		$out.="</table></center>";
 		return $out;
 	}
-}?>
+}

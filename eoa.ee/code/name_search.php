@@ -132,4 +132,4 @@ function search($conn, $name){
 	}
 }
 
-}?>
+}

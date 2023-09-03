@@ -85,4 +85,4 @@ function esialg($url,$ul,$nimi,$alanimi){
 	return $log;
 }
 
-}?>
+}

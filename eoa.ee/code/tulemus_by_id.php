@@ -120,4 +120,4 @@ function tulemus($conn, $id){
 
 }
 
-}?>
+}
