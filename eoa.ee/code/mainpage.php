@@ -1,6 +1,6 @@
 <?php namespace mainpage {
 	
-	function get_all($conn, $tbname){
+	function get_all($conn, $tbname): array {
 		$sql = "SELECT * FROM ".$tbname.";";
 		$result = $conn->query($sql);
 		$out = array();
@@ -12,7 +12,7 @@
 		return $out;
 	}
 	
-	function get_table($conn, $tbname, $sis){
+	function get_table($conn, $tbname, $sis): array {
 		$sql = "SELECT * FROM ".$tbname." ".$sis.";";
 		$result = $conn->query($sql);
 		$out = array();
@@ -24,7 +24,7 @@
 		return $out;
 	}
 
-	function main_stats($conn){
+	function main_stats($conn): string {
 		$names = get_all($conn, "person");
 		$schools = get_all($conn, "school");
 		$subject = get_all($conn, "subject");
@@ -38,7 +38,7 @@
 		return $out;
 	}
 	
-	function this_year_results($conn){
+	function this_year_results($conn): string {
 		$Cid = "54";
 		#$out="<br><h2>Mata sügisese lahtise ESIALGSED tulemused (2020)</h2>";
 		#$out.='<a href="?id=10000">NOOREM</a><br>';
@@ -55,7 +55,7 @@
 		return $out;
 	}
 	
-	function get_mainpage($conn){
+	function get_mainpage($conn): string {
 		$out = "<center>";
 		$out .= "<h1>Tegemist on Eesti olümpiaadide andmebaasi koduleheküljega</h1><br>";
 		$out .= main_stats($conn);
@@ -63,5 +63,5 @@
 		$out .= "</center>";
 		return $out;
 	}
-	
+
 }

@@ -11,7 +11,7 @@
 		return $name;
 	}
 	
-	function all_names($conn) {
+	function all_names($conn): array {
 		$sql = "SELECT * FROM person;";
 		$result = $conn->query($sql);
 		$nimi = array();
@@ -23,7 +23,7 @@
 		return $nimi;
 	}
 	
-	function all_conts($conn, $s_id) {
+	function all_conts($conn, $s_id): array {
 		$sql = "SELECT * FROM contestant WHERE school_id =".$s_id.";";
 		$result = $conn->query($sql);
 		$out = array();
@@ -35,7 +35,7 @@
 		return $out;
 	}
 	
-	function all_mentors($conn, $conts){
+	function all_mentors($conn, $conts): array {
 		$c_list = "(";
 		foreach($conts as $c){
 			$c_list.=$c["id"].",";
@@ -52,7 +52,7 @@
 		return $out;
 	}
 	
-	function get_profile($conn, $s_id){
+	function get_profile($conn, $s_id): string {
 		$school_name = school_name($conn, $s_id);
 		$names = all_names($conn);
 		$conts = all_conts($conn, $s_id);

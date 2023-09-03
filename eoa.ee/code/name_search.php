@@ -12,7 +12,7 @@ function name_by_id($conn, $n_id) {
 	return $name;
 }
 
-function find_by_name($conn, $name) {
+function find_by_name($conn, $name): array {
 	$sql = "SELECT id, name FROM person WHERE name LIKE '%".$conn->real_escape_string($name)."%';";
 	$result = $conn->query($sql);
 	$names = array();
@@ -24,7 +24,7 @@ function find_by_name($conn, $name) {
 	return $names;
 }
 
-function multi_name($nimed, $nimi){
+function multi_name($nimed, $nimi): string {
 	$out="<center><br><h1>Inimesed, kelle nimed vastavad otsingule '".$nimi."':</h1><br>";
 	foreach ($nimed as $id=>$name){
 		$out.="<h3><a href='?name_id=".$id."'>".$name."</a></h3>";
@@ -32,7 +32,7 @@ function multi_name($nimed, $nimi){
 	return $out;
 }
 
-function get_participations($conn, $id){
+function get_participations($conn, $id): array {
 	$sql = "SELECT placement, s_name, t_name, y_name, a_name, sc_id
 		FROM contestant co
 		INNER JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
@@ -49,7 +49,7 @@ function get_participations($conn, $id){
 	return $participations;
 }
 
-function get_mentees($conn, $id){
+function get_mentees($conn, $id): array {
 	$sql = "SELECT p.id m_id, p.name m_name, s_name, t_name, y_name, a_name, placement, sc_id
 		FROM mentor m
 		INNER JOIN contestant co ON co.id = m.contestant_id

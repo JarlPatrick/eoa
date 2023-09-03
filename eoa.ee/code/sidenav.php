@@ -1,6 +1,6 @@
 <?php namespace sidenav {
 	
-	function get_all($conn, $tbname){
+	function get_all($conn, $tbname): array {
 		$sql = "SELECT * FROM ".$tbname.";";
 		$result = $conn->query($sql);
 		$out = array();
@@ -12,7 +12,7 @@
 		return $out;
 	}
 	
-	function get_all_by_id($conn, $tbname){
+	function get_all_by_id($conn, $tbname): array {
 		$sis = get_all($conn, $tbname);
 		$out = array();
 		foreach($sis as $s){
@@ -21,7 +21,7 @@
 		return $out;
 	}
 	
-	function get_table($conn, $tbname, $sis){
+	function get_table($conn, $tbname, $sis): array {
 		$sql = "SELECT * FROM ".$tbname." ".$sis.";";
 		$result = $conn->query($sql);
 		$out = array();
@@ -33,7 +33,7 @@
 		return $out;
 	}
 	
-	function get_sidenav($conn){
+	function get_sidenav($conn): string {
 		$ained = get_all($conn, "subject");
 		$aastad = get_all($conn, "year");
 		$type = get_all_by_id($conn, "type");

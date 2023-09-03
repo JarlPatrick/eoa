@@ -1,5 +1,5 @@
 <?php namespace hof {	
-	function get_students($conn) {
+	function get_students($conn): array {
 		$sql = "SELECT person.id id, person.name name, COUNT(*) participations,
 				COUNT(CASE WHEN contestant.placement = 1 THEN 1 END) place1,
 				COUNT(CASE WHEN contestant.placement = 2 THEN 1 END) place2,
@@ -17,7 +17,7 @@
 		return $students;
 	}
 	
-	function hof($conn){
+	function hof($conn): string {
 		$students = get_students($conn);
 		
 		$out="<center><h1>Enim olümpiaadidest osa võtnud õpilased:</h1>";

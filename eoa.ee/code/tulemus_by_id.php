@@ -1,6 +1,6 @@
 <?php namespace tul_by_id {
 
-function get_title($conn, $id){
+function get_title($conn, $id): string {
 	$sql = "SELECT * FROM subcontest WHERE id=".$id.";";
 	$result = $conn->query($sql);
 	if ($result->num_rows > 0) {
@@ -27,7 +27,7 @@ function get_title($conn, $id){
 	return $out;
 }
 
-function name_by_id($conn, $table_name) {
+function name_by_id($conn, $table_name): array {
 	$sql = "SELECT id, name FROM ".$table_name.";";
 	$result = $conn->query($sql);
 	$nimed = array();
@@ -39,7 +39,7 @@ function name_by_id($conn, $table_name) {
 	return $nimed;
 }
 
-function get_results($conn,$ids){
+function get_results($conn,$ids): array {
 	$entrys = array();
 	foreach ($ids as &$id){
 		$entry = array();
@@ -55,7 +55,7 @@ function get_results($conn,$ids){
 	return $entrys;
 }
 
-function get_mentor($conn, $id){
+function get_mentor($conn, $id): array {
 	$mentors = array();
 	$sql = "SELECT mentor_id FROM mentor where contestant_id=".$id.";";
 	$result = $conn->query($sql);
@@ -68,7 +68,7 @@ function get_mentor($conn, $id){
 	
 }
 
-function tulemus($conn, $id){
+function tulemus($conn, $id): string {
 	
 	$nimed = name_by_id($conn,"person");
 	$vanus = name_by_id($conn,"age_group");
