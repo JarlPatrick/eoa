@@ -8,7 +8,12 @@
             LEFT JOIN type ON contest.type_id = type.id
             LEFT JOIN subcontest ON contest.id = subcontest.contest_id
             LEFT JOIN age_group ON subcontest.age_group_id = age_group.id
-            ORDER BY subject_id, year.name DESC;";
+            ORDER BY subject_id, year.name DESC,
+            FIELD(type_id, 17, 18, 20, 16, 19, 21, 1) DESC,
+            FIELD(age_group.name,'1', '2', '3', '4', '5', '6', '7', '8', '7-8', '9',
+                'Põhikool B- ja C-keel', 'Põhikool A-keel', 'Põhikool', '10', '9-10', 'Noorem',
+                '11', '12', '11-12', 'Vanem', 'Gümnaasium B- ja C-keel', 'Gümnaasium A-keel', 'Gümnaasium',
+                'Koond', 'Avatud') DESC;";
         $result = $conn->query($sql);
         $out = array();
         if ($result->num_rows > 0) {
