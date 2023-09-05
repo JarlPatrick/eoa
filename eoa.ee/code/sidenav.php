@@ -1,8 +1,8 @@
 <?php namespace sidenav {
     function get_contests($conn): array {
-        $sql = "SELECT contest.id as id, subject_id, subject.name as subject_name,
-            year_id, year.name as year_name, type.name as type_name, subcontest.id as subcontest_id,
-            age_group.name as age_group_name FROM contest
+        $sql = "SELECT contest.id AS id, subject_id, subject.name AS subject_name,
+            year_id, year.name AS year_name, type.name AS type_name, subcontest.id AS subcontest_id,
+            age_group.name AS age_group_name FROM contest
             LEFT JOIN subject ON contest.subject_id = subject.id
             LEFT JOIN year ON contest.year_id = year.id
             LEFT JOIN type ON contest.type_id = type.id
