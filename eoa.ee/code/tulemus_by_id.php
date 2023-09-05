@@ -1,28 +1,21 @@
 <?php namespace tul_by_id {
 
 function get_title($conn, $id): string {
-	$sql = "SELECT * FROM subcontest WHERE id=".$id.";";
+    $sql = "SELECT subcontest.id AS id, subcontest.name AS subcontest_name,
+    contest.id AS contest_id, contest.name AS contest_name, tasks_link FROM subcontest
+    LEFT JOIN contest ON subcontest.contest_id = contest.id
+    WHERE subcontest.id=".$id.";";
 	$result = $conn->query($sql);
-	if ($result->num_rows > 0) {
-		while($row = $result->fetch_assoc()) {
-			$Cid = $row["contest_id"];
-			$SCname = $row["name"];
-			$SCtasks_link = $row["tasks_link"];
-		}
-	}
-	
-	$sql = "SELECT * FROM contest WHERE id=".$Cid.";";
-	$result = $conn->query($sql);
-	if ($result->num_rows > 0) {
-		while($row = $result->fetch_assoc()) {
-			$Cname = $row["name"];
-		}
-	}
-	
-	$out =  "<center><h1>".$Cname."<br>".$SCname."</h1>";
-	if(!empty($SCtasks_link)){
-		$out .= "<h2><a href='".$SCtasks_link."'>Ülesanded</a></h2>";
-	}
+	if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        $out = "<center><h1>".$row["contest_name"]."<br>".$row["subcontest_name"]."</h1>";
+        if(!empty($row["tasks_link"])){
+            $out .= "<h2><a href='".$row["tasks_link"]."'>Ülesanded</a></h2>";
+        }
+	} else {
+        $out = "<center><h1>DATA ERROR</h1>";
+    }
+
 	$out .= '<div style="overflow-x:auto;"><table class="sortable">';
 	return $out;
 }
