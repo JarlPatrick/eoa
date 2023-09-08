@@ -164,12 +164,11 @@ Additionally, whether to perform a "dry run" (rollback)
 def addContest(contest, dryRun = False):
     try:
         # Get parameters
-        yearId = getMakeRow('year', name = contest['year'])
         typeId = getMakeRow('type', name = contest['type'])
         subjectId = getMakeRow('subject', name = contest['subject'])
         # Create contest
         contestId = getMakeRow('contest',
-                              year_id = yearId,
+                              year = contest["year"],
                               type_id = typeId,
                               subject_id = subjectId,
                               name = contest['name'])

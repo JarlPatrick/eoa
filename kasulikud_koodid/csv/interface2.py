@@ -189,7 +189,7 @@ def inferFields(filename):
             y2 = m.group(2)
             if str(int(y1) + 1).endswith(y2):
                 y2 = str(int(y1) + 1)
-                setEntry(year["entry"], f"{y1}/{y2}")
+                setEntry(year["entry"], f"{y1}")
 
     # Columns
     for ci, name in enumerate(currentGrid[0]):
