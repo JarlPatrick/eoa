@@ -39,16 +39,23 @@
 	}
 	
 	function this_year_results($conn): string {
-		$Cid = "54";
-		#$out="<br><h2>Mata sügisese lahtise ESIALGSED tulemused (2020)</h2>";
-		#$out.='<a href="?id=10000">NOOREM</a><br>';
-		#$out.='<a href="?id=10001">VANEM</a>';
-		$out = "<br><h2>Praeguse õppeaasta tulemused (2020/2021)</h2>";
-		$contests = get_table($conn, "contest", "WHERE year_id=".$Cid );
-		foreach($contests as &$c){
+        $currentYear = date("Y");
+        $currentMonth = date("n");
+        if ($currentMonth < 9) {
+            $currentYear -= 1;
+        }
+        $contests = get_table($conn, "contest", "WHERE year=".$currentYear );
+        if (count($contests) == 0) {
+            $currentYear -= 1;
+            $contests = get_table($conn, "contest", "WHERE year=".$currentYear );
+            $out = "<br><h2>Eelmise õppeaasta tulemused (".($currentYear)."/".($currentYear+1).")</h2>";
+        } else {
+            $out = "<br><h2>Praeguse õppeaasta tulemused (".($currentYear)."/".($currentYear+1).")</h2>";
+        }
+		foreach($contests as $c){
 			$out .="<h3>".$c['name']."</h3>";
 			$subcontests = get_table($conn, "subcontest", "WHERE contest_id=".$c['id'] );
-			foreach($subcontests as &$s){
+			foreach($subcontests as $s){
 				$out .='<a href="?id='.$s['id'].'">'.$s['name'].'</a><br>';
 			}
 		}
