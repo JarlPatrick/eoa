@@ -92,6 +92,9 @@ function tulemus($conn, $id): string {
 	$out.="<tr><th>Koht</th>";
 	$out.="<th>Nimi</th><th>Klass</th><th>Kool</th><th>Juhendaja</th>";
 	$columns = get_columns($conn, $id);
+    if (count($columns) == 0) {
+        die("<h1>404</h1><div>Lehte ei leitud</div>");
+    }
 	$taskIDs = array();
     foreach ($columns as $column) {
         $out .= "<th>".$column["name"]."</th>";
