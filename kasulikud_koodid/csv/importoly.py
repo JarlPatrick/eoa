@@ -88,14 +88,16 @@ def addContestant(contestant, subcontestId, columnIds):
     personId = getMakeRow('person', name = contestant['name'])
 
     # Get school
-    schoolId = getMakeRow('school', name = contestant['school'])
+    schoolId = None
+    if contestant['school'] is not None and contestant['school'] != '':
+        schoolId = getMakeRow('school', name = contestant['school'])
     
     # Create contestant
     contestantId = getMakeRow('contestant',
                          subcontest_id = str(subcontestId),
                          person_id = str(personId),
                          age_group_id = ageGroupId,
-                         school_id = str(schoolId),
+                         school_id = schoolId,
                               placement = contestant['placement'].strip() or None if contestant['placement'] else None)
 
     # Create fields for contestant
@@ -103,7 +105,7 @@ def addContestant(contestant, subcontestId, columnIds):
         createRow('contestant_field',
               task_id = str(c),
               contestant_id = str(contestantId),
-              entry = str(v))
+              entry = str(v) if v is not None else None)
     
     # Create people for mentors
     mentorIds = [getMakeRow('person', name = m) for m in contestant['instructors']]

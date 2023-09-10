@@ -329,14 +329,14 @@ def importTable(*_):
         contestant = {"fields": []}
         for ci, field in enumerate(row):
             if ci not in sc or sc[ci] == "total":
-                contestant["fields"].append(field.strip() or None)
+                contestant["fields"].append(field.strip())
 
         contestant["instructors"] = ([] if coli["instructors"] is None else
-                                     [x.strip() for x in re.split(r"[|,]", contestant["instructors"])
+                                     [x.strip() for x in re.split(r"[|,/]+", row[coli["instructors"]])
                                       if x.strip() != ""])
         contestant["placement"] = re.sub(r"[. ]", "", row[coli["placement"]])
-        contestant["class"] = None if coli["class"] is None else row[coli["class"]]
-        contestant["school"] = None if coli["school"] is None else row[coli["school"]]
+        contestant["class"] = None if coli["class"] is None else row[coli["class"]].strip()
+        contestant["school"] = None if coli["school"] is None else row[coli["school"]].strip()
 
         # Name
         if haveName:
