@@ -70,7 +70,7 @@ function get_mentees($conn, $id): array {
 function person_profile($conn, $id){
 	$name = name_by_id($conn, $id);
 	if($name == "") {
-		return;
+        die("<h1>404</h1><div>Lehte ei leitud</div>");
 	}
 	
 	$out="<center><br><h1>".$name." profiil </h1><br>";

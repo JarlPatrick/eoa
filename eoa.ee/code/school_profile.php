@@ -3,9 +3,10 @@
 	function school_name($conn, $s_id){
 		$sql = "SELECT name FROM school WHERE id=".$s_id.";";
 		$result = $conn->query($sql);
+        $name = "";
 		if ($result->num_rows > 0) {
-		while($row = $result->fetch_assoc()) {
-			$name = $row["name"];
+            while($row = $result->fetch_assoc()) {
+                $name = $row["name"];
 			}
 		}
 		return $name;
@@ -54,6 +55,9 @@
 	
 	function get_profile($conn, $s_id): string {
 		$school_name = school_name($conn, $s_id);
+        if($school_name == "") {
+            die("<h1>404</h1><div>Lehte ei leitud</div>");
+        }
 		$names = all_names($conn);
 		$conts = all_conts($conn, $s_id);
 		$mentors_ids = all_mentors($conn, $conts);
