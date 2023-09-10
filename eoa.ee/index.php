@@ -61,7 +61,7 @@ echo sidenav\get_sidenav($conn);
 $queries = array();
 parse_str($_SERVER['QUERY_STRING'], $queries);
 if(!empty($queries['id'])){
-  if((int)$queries['id'] > 0 and (int)$queries['id'] < 10000){
+  if((int)$queries['id'] > 0){
     echo tul_by_id\tulemus($conn,(int)$queries['id']);
   }
   /*if((int)$queries['id'] == 10000){
@@ -75,7 +75,7 @@ if(!empty($queries['id'])){
 }elseif(!empty($queries['name'])){
   echo name_s\search($conn, $queries['name']);
 }elseif(!empty($queries['name_id'])){
-  if((int)$queries['name_id'] > 0 and (int)$queries['name_id'] < 10000){
+  if((int)$queries['name_id'] > 0){
     echo name_s\person_profile($conn, $queries['name_id']);
   }
 }elseif(!empty($queries['kool'])){
@@ -83,7 +83,7 @@ if(!empty($queries['id'])){
 }elseif(!empty($queries['hof'])){
   echo hof\hof($conn);
 }elseif(!empty($queries['school_id'])){
-  if((int)$queries['school_id'] > 0 and (int)$queries['school_id'] < 10000){
+  if((int)$queries['school_id'] > 0){
     echo school_profile\get_profile($conn, $queries['school_id']);
   }
 }else{
