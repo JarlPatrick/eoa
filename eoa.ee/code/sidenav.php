@@ -1,14 +1,13 @@
 <?php namespace sidenav {
     function get_contests($conn): array {
-        $sql = "SELECT contest.id as id, subject_id, subject.name as subject_name,
-            year_id, year.name as year_name, type.name as type_name, subcontest.id as subcontest_id,
-            age_group.name as age_group_name FROM contest
+        $sql = "SELECT contest.id AS id, subject_id, subject.name AS subject_name,
+            year, type.name AS type_name, subcontest.id AS subcontest_id,
+            age_group.name AS age_group_name FROM contest
             LEFT JOIN subject ON contest.subject_id = subject.id
-            LEFT JOIN year ON contest.year_id = year.id
             LEFT JOIN type ON contest.type_id = type.id
             LEFT JOIN subcontest ON contest.id = subcontest.contest_id
             LEFT JOIN age_group ON subcontest.age_group_id = age_group.id
-            ORDER BY subject_id, year.name DESC,
+            ORDER BY subject_id, year DESC,
             FIELD(type_id, 17, 18, 20, 16, 19, 21, 1) DESC,
             FIELD(age_group.name,'1', '2', '3', '4', '5', '6', '7', '8', '7-8', '9',
                 'Põhikool B- ja C-keel', 'Põhikool A-keel', 'Põhikool', '10', '9-10', 'Noorem',
@@ -34,7 +33,7 @@
         $out = '<div id="mySidenav" class="sidenav"><a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>';
         foreach ($contestObjects as $contestObject) {
             $aine = $contestObject['subject_id'];
-            $aasta = $contestObject['year_id'];
+            $aasta = $contestObject['year'];
             $comp = $contestObject['id'];
             $subComp = $contestObject['subcontest_id'];
             if ($aine != $subject) {
@@ -49,7 +48,7 @@
                     $out .= '</div>';
                 }
                 $year = $aasta;
-                $out .= '<button class="accordion">'.$contestObject['year_name'].'</button><div class="panel" id="s'.$aine.'y'.$aasta.'">';
+                $out .= '<button class="accordion">'.$aasta."/".($aasta + 1).'</button><div class="panel" id="s'.$aine.'y'.$aasta.'">';
             } if ($comp != $contest) {
                 $contest = $comp;
                 $out .= '<h1>'.$contestObject['type_name'].'</h1>';

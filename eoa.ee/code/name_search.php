@@ -35,7 +35,7 @@ function multi_name($nimed, $nimi): string {
 function get_participations($conn, $id): array {
 	$sql = "SELECT placement, s_name, t_name, y_name, a_name, sc_id
 		FROM contestant co
-		INNER JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
+		LEFT JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
 		WHERE co.person_id = $id
 		ORDER BY y_name DESC, sc_id DESC;";
 
@@ -43,7 +43,7 @@ function get_participations($conn, $id): array {
 	$participations = array();
 	if ($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			array_push($participations, $row);
+			$participations[] = $row;
 		}
 	}
 	return $participations;
@@ -52,16 +52,16 @@ function get_participations($conn, $id): array {
 function get_mentees($conn, $id): array {
 	$sql = "SELECT p.id m_id, p.name m_name, s_name, t_name, y_name, a_name, placement, sc_id
 		FROM mentor m
-		INNER JOIN contestant co ON co.id = m.contestant_id
-		INNER JOIN person p ON p.id = co.person_id
-		INNER JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
+		LEFT JOIN contestant co ON co.id = m.contestant_id
+		LEFT JOIN person p ON p.id = co.person_id
+		LEFT JOIN full_subcontest sub ON sub.sc_id = co.subcontest_id
 		WHERE m.mentor_id = $id
 		ORDER BY y_name DESC, sc_id DESC;";
 	$result = $conn->query($sql);
 	$mentees = array();
 	if($result->num_rows > 0) {
 		while($row = $result->fetch_assoc()) {
-			array_push($mentees, $row);
+			$mentees[] = $row;
 		}
 	}
 	return $mentees;
