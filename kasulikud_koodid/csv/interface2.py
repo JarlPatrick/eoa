@@ -255,21 +255,27 @@ def inferFields(filename):
                 break
     highlightGrid()
 
+lastOpenedFile = None
 """
 "Open file" action performed
 """
 def openFile():
+    global lastOpenedFile
     # file dialog
     filename = askopenfilename(filetypes=[("CSV",".csv"), ("File", "*")])
     if filename == ():
         # cancelled
         return
 
-    print(filename)
-    with open(filename) as inFile:
+    lastOpenedFile = filename
+    reopenFile()
+
+def reopenFile():
+    print(lastOpenedFile)
+    with open(lastOpenedFile) as inFile:
         parseCSV(inFile)
 
-    inferFields(filename)
+    inferFields(lastOpenedFile)
     highlightGrid()
 
 def highlightGrid():
@@ -366,9 +372,11 @@ defaultColor = root.cget("bg")
 toolbar = tk.Frame(root)
 toolbar.pack(fill=tk.X, side=tk.TOP)
 openButton = tk.Button(toolbar, text="Open", command=openFile)
-openButton.pack()
+openButton.pack(side='left')
+reloadButton = tk.Button(toolbar, text="Reload", command=reopenFile)
+reloadButton.pack(side='left')
 importButton = tk.Button(toolbar, text="Import", command=importTable)
-importButton.pack()
+importButton.pack(side='left')
 
 # contest info
 contestInfo = tk.Frame(root)
