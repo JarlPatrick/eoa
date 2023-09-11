@@ -44,7 +44,7 @@ function get_contestant_info($conn, $id): array {
         LEFT JOIN mentor ON contestant.id = mentor.contestant_id
         LEFT JOIN person mentorPerson ON mentor.mentor_id = mentorPerson.id
         WHERE subcontest_id=".$id."
-        ORDER BY ISNULL(placement), placement;";
+        ORDER BY ISNULL(placement), placement, contestant_id;";
     $result = $conn->query($sql);
     $out = array();
     if ($result->num_rows > 0) {
