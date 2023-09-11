@@ -38,19 +38,19 @@ maxL = [0, 0, 0]
 
 def getAll():
     global maxL
-    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname FROM school ORDER BY subname LIMIT 10000"
+    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname, (SELECT COUNT(*) FROM contestant WHERE contestant.school_id = school.id) freq FROM school ORDER BY subname LIMIT 10000"
     logging.info('Query: ' + repr(query))
     cur.execute(query)
     currData.clear()
-    maxL = [0, 0, 0]
-    for id, name, subname in cur:
-        currData.append((id, name, subname))
-        for i, s in enumerate((str(id), name, subname)):
+    maxL = [0, 0, 0, 0]
+    for id, name, subname, freq in cur:
+        currData.append((id, name, subname, freq))
+        for i, s in enumerate((str(id), name, subname, str(freq))):
             maxL[i] = max(maxL[i], len(s))
 
-    for id, name, subname in currData:
-        id, name, subname = (str(a).ljust(l) for a, l in zip((id, name, subname), maxL))
-        s = f'{id}    {name}    {subname}'
+    for id, name, subname, freq in currData:
+        id, name, subname, freq = (str(a).ljust(l) for a, l in zip((id, name, subname, freq), maxL))
+        s = f'id:{id} #:{freq}    {name}    {subname}'
         chooseBox.insert(END, s)
         destBox.insert(END, s)
 
@@ -167,8 +167,8 @@ def doSearch(*_):
 
     for i in searchMap:
         t = currData[i]
-        id, name, subname = (str(a).ljust(l) for a, l in zip(t, maxL))
-        s = f'{id}    {name}    {subname}'
+        id, name, subname, freq = (str(a).ljust(l) for a, l in zip(t, maxL))
+        s = f'id:{id} #:{freq}    {name}    {subname}'
         chooseBox.insert(END, s)
         destBox.insert(END, s)
         if i in selectedL:
