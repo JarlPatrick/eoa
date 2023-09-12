@@ -1,5 +1,6 @@
 
 import argparse
+import pickle
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextLineHorizontal, LTChar
 from typing import Iterable
@@ -23,6 +24,11 @@ if args.csv is None:
 pages = extract_pages(args.pdf)
 
 images = pdf2image.convert_from_path(args.pdf)
+try:
+    with open("lastboxes.pickle",'rb') as f:
+        prev = pickle.loads(f.read())
+except:
+    prev = ([], [])
 
 def get_texts(root):
     if isinstance(root, LTTextLineHorizontal):
@@ -161,6 +167,11 @@ for p, img in zip(pages, images):
             selectBoxes.clear()
         elif key == ord('p'):
             selectBoxes, removeBoxes = prev
+        elif key == ord('f'):
+            if removing:
+                removeBoxes = removeBoxes[::-1]
+            else:
+                selectBoxes = selectBoxes[::-1]
 
     prev = selectBoxes, removeBoxes
             
@@ -176,6 +187,7 @@ for p, img in zip(pages, images):
     boxes = newBoxes
     
     rc = []
+    lineYs = []
     for ci, selectBox in enumerate(selectBoxes):
         if len(cols) == ci:
             cols.append(["" for _ in range(rowCount)])
@@ -189,9 +201,21 @@ for p, img in zip(pages, images):
                         s.append(ch.get_text())
                 s = "".join(s).strip()
                 if len(s) > 0:
-                    rc[ci] += 1
-                    cols[ci].append(s)
-
+                    if ci == 0:
+                        lineYs.append(box[0][1])
+                        rc[ci] += 1
+                        cols[ci].append(s)
+                    else:
+                        while len(lineYs) > rc[ci] and lineYs[rc[ci]] < box[0][1] - 4:
+                            # this box is too far down - there must have been blanks before
+                            rc[ci] += 1
+                            cols[ci].append("")
+                        if len(lineYs) > rc[ci] and box[0][1] < lineYs[rc[ci]] - 4:
+                            # this box is too far up - should be a part of the previous value
+                            cols[ci][-1] += '\n' + s
+                        else:
+                            rc[ci] += 1
+                            cols[ci].append(s)
     rowCount += max(rc)
     for col in cols:
         col += ["" for _ in range(rowCount - len(col))]
@@ -202,3 +226,5 @@ with open(args.csv, "w", newline="") as f:
     for ri in range(rowCount):
         writer.writerow([col[ri] for col in cols])
 
+with open("lastboxes.pickle",'wb') as f:
+    f.write(pickle.dumps(prev))
