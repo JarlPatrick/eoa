@@ -85,26 +85,41 @@ function get_results($conn, $ids): array {
     return $entries;
 }
 
+function has_content($objects, $col): bool {
+    foreach ($objects as $object) {
+        if(!is_null($object[$col])) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function tulemus($conn, $id): string {
 	
 	$out = get_title($conn, $id);
-	
-	$out.="<tr><th>Koht</th>";
-	$out.="<th>Nimi</th><th>Klass</th><th>Kool</th><th>Juhendaja</th>";
 	$columns = get_columns($conn, $id);
     if (count($columns) == 0) {
         die("<h1>404</h1><div>Lehte ei leitud</div>");
     }
-	$taskIDs = array();
+
+    $contestantInfoObjects = get_contestant_info($conn, $id);
+    $ageGroupHasContent = has_content($contestantInfoObjects, "age_group_name");
+    $schoolHasContent = has_content($contestantInfoObjects, "school_id");
+    $mentorHasContent = has_content($contestantInfoObjects, "mentor_id");
+
+    $out .= "<tr><th>Koht</th>";
+    $out .= "<th>Nimi</th>";
+    $out .= $ageGroupHasContent ? "<th>Klass</th>" : "";
+    $out .= $schoolHasContent ? "<th>Kool</th>" : "";
+    $out .= $mentorHasContent ? "<th>Juhendaja</th>" : "";
+    $taskIDs = array();
     foreach ($columns as $column) {
         $out .= "<th>".$column["name"]."</th>";
         $taskIDs[] = $column["id"];
     }
     $out.="</tr>";
-	
-	$results = get_results($conn, $taskIDs);
 
-    $contestantInfoObjects = get_contestant_info($conn, $id);
+    $results = get_results($conn, $taskIDs);
     $mentors = array();
     foreach ($contestantInfoObjects as $index => $contestantInfoObject) {
         $addRow = true;
@@ -115,18 +130,21 @@ function tulemus($conn, $id): string {
         }
         if ($addRow) {
             $out .= "<tr class='item'><td>".$contestantInfoObject["placement"]."</td><td><a href='?name_id=".$contestantInfoObject["person_id"]."'>".$contestantInfoObject["person_name"]."</a></td>";
-            $out .= "<td>".$contestantInfoObject["age_group_name"]."</td><td><a href='?school_id=".$contestantInfoObject["school_id"]."'>".$contestantInfoObject["school_name"]."</a></td>";
-            $mentors[] = array("id" => $contestantInfoObject["mentor_id"], "name" => $contestantInfoObject["mentor_name"]);
-            $out .="<td>";
-            foreach ($mentors as $mentor){
-                if (array_search($mentor, $mentors) > 0){$out .=" / ";}
-                if (!is_null($mentor["id"])) {
-                    $out .="<a href='?name_id=".$mentor["id"]."'>";
-                    $out .=$mentor["name"]."</a>";
+            $out .= $ageGroupHasContent ? "<td>".$contestantInfoObject["age_group_name"]."</td>" : "";
+            $out .= $schoolHasContent ? "<td><a href='?school_id=".$contestantInfoObject["school_id"]."'>".$contestantInfoObject["school_name"]."</a></td>" : "";
+            if ($mentorHasContent) {
+                $mentors[] = array("id" => $contestantInfoObject["mentor_id"], "name" => $contestantInfoObject["mentor_name"]);
+                $out .="<td>";
+                foreach ($mentors as $mentor){
+                    if (array_search($mentor, $mentors) > 0){$out .=" / ";}
+                    if (!is_null($mentor["id"])) {
+                        $out .="<a href='?name_id=".$mentor["id"]."'>";
+                        $out .=$mentor["name"]."</a>";
+                    }
                 }
+                $out .="</td>";
+                $mentors = array();
             }
-            $out .="</td>";
-            $mentors = array();
             foreach ($taskIDs as $taskID){
                 $out .="<td>".$results[$taskID][$contestantInfoObject["contestant_id"]]."</td>";
             }
