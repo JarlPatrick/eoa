@@ -149,10 +149,11 @@ def addSubcontest(subcontest, contestId):
                        min_class = str(subcontest['class_range'][0]),
                        max_class = str(subcontest['class_range'][1]))
 
+    execute("SELECT id FROM subcontest WHERE contest_id = %s AND age_group_id = %s", (str(contestId), str(ageGroupId)))
+    if cur.fetchone():
+        raise Exception("this contest already has this subcontest")
     # Create subcontest
-    # should be createRow but we want to catch duplicate subcontests
-    # and this will cause duplicate key errors
-    subcontestId = getMakeRow('subcontest',
+    subcontestId = createRow('subcontest',
                          contest_id = str(contestId),
                          age_group_id = str(ageGroupId),
                          name = subcontest['name'])
@@ -217,6 +218,7 @@ def addContest(contest, dryRun = False):
             info("Contest added")
     except Exception as e:
         conn.rollback()
+        row_cache.clear()
         logging.exception(e)
         raise Exception()
 
