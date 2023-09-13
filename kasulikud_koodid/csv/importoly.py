@@ -77,6 +77,23 @@ def getMakeRow(table, getId = True, **params):
     row_cache[(table, *paramsList)] = result
     return result
 
+# separate from row_cache because we need to store info from 2 tables (sort of)
+school_cache = {}
+def getSchoolId(name: str):
+    if name in school_cache:
+        return school_cache[name]
+    execute("SELECT correct FROM school_alias WHERE name = %s", (name,))
+    for id, in cur:
+        school_cache[name] = id
+        return id
+    execute("SELECT id FROM school WHERE name = %s", (name,))
+    for id, in cur:
+        school_cache[name] = id
+        return id
+    res = createRow("school", name = name)
+    school_cache[name] = res
+    return res
+
 """
 Add a contestant
 Expects a dictionary containing:
@@ -103,7 +120,7 @@ def addContestant(contestant, subcontestId, columnIds):
     # Get school
     schoolId = None
     if contestant['school'] is not None and contestant['school'] != '':
-        schoolId = getMakeRow('school', name = contestant['school'])
+        schoolId = getSchoolId(contestant['school'])
 
     # Create contestant
     contestantId = createRow('contestant',
@@ -219,6 +236,7 @@ def addContest(contest, dryRun = False):
     except Exception as e:
         conn.rollback()
         row_cache.clear()
+        school_cache.clear()
         logging.exception(e)
         raise Exception()
 
