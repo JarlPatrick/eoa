@@ -52,12 +52,6 @@ def getAll():
         for i, s in enumerate((str(id), name, subname, str(freq))):
             maxL[i] = max(maxL[i], len(s))
 
-    for id, name, subname, freq in currData:
-        id, name, subname, freq = (str(a).ljust(l) for a, l in zip((id, name, subname, freq), maxL))
-        s = f'id:{id} #:{freq}    {name}    {subname}'
-        chooseBox.insert(END, s)
-        destBox.insert(END, s)
-
     searchMap.clear()
     chooseBox.selection_clear(0, END)
     destBox.selection_clear(0, END)
@@ -78,7 +72,7 @@ def message(text):
     button = Button(popup, text='OK', command=okCallback)
     button.pack(side=BOTTOM, fill=X)
 
-def replaceSchools():
+def replaceSchools(saveAlias):
     try:
         replacement = currData[searchMap[next(i for i in destBox.curselection())]]
     except StopIteration:
@@ -99,11 +93,12 @@ def replaceSchools():
         cur.execute(query, t)
         logging.debug('Affected: ' + str(cur.rowcount))
 
-        query = 'REPLACE INTO school_alias(name, correct) VALUES (%s, %s)'
-        t = [(p[1], replacement[0]) for p in schools]
-        logging.debug('Query: ' + repr(query) + ', ' + repr(t))
-        cur.executemany(query, t)
-        logging.debug('Affected: ' + str(cur.rowcount))
+        if saveAlias:
+            query = 'REPLACE INTO school_alias(name, correct) VALUES (%s, %s)'
+            t = [(p[1], replacement[0]) for p in schools]
+            logging.debug('Query: ' + repr(query) + ', ' + repr(t))
+            cur.executemany(query, t)
+            logging.debug('Affected: ' + str(cur.rowcount))
 
         query = 'UPDATE contestant SET school_id = %s WHERE school_id IN '  + school_tuple
         t = tuple(map(str, chain([replacement[0]], (p[0] for p in schools))))
@@ -238,22 +233,25 @@ buttonFrame.grid(row=1, column=0, sticky=E+W)
 queryAll = Button(buttonFrame, text="Query all", command=getAll)
 queryAll.grid(row=0, column=0)
 
-def replaceCommand():
+def replaceCommand(saveAlias):
     count = len(chooseBox.curselection())
-    confirm(f'Are you sure?\nReplacing {count} row' + ('' if count == 1 else 's') + '.', replaceSchools)
+    confirm(f'Are you sure?\nReplacing {count} row' + ('' if count == 1 else 's') + '.', lambda: replaceSchools(saveAlias))
 
-replaceButton = Button(buttonFrame, text="Replace", command=replaceCommand)
+replaceButton = Button(buttonFrame, text="Replace", command=lambda: replaceCommand(True))
 replaceButton.grid(row=0, column=1)
+replaceNoaliasButton = Button(buttonFrame, text="Replace (no alias)", command=lambda: replaceCommand(False))
+replaceNoaliasButton.grid(row=0, column=2)
 
 searchVar = StringVar()
 searchVar.trace_add("write", doSearch)
 
 searchBox = Entry(buttonFrame, textvariable=searchVar)
-searchBox.grid(row=0, column=2, sticky=E+W)
+searchBox.grid(row=0, column=3, sticky=E+W)
 
 buttonFrame.columnconfigure(0, weight=0)
 buttonFrame.columnconfigure(1, weight=0)
-buttonFrame.columnconfigure(2, weight=1)
+buttonFrame.columnconfigure(2, weight=0)
+buttonFrame.columnconfigure(3, weight=1)
 buttonFrame.rowconfigure(0, weight=1)
 
 master.columnconfigure(0, weight=1)
