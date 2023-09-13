@@ -42,7 +42,7 @@ maxL = [0, 0, 0]
 
 def getAll():
     global maxL
-    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname, (SELECT COUNT(*) FROM contestant WHERE contestant.school_id = school.id) freq FROM school ORDER BY subname LIMIT 10000"
+    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname, (SELECT COUNT(*) FROM contestant WHERE contestant.school_id = school.id) freq FROM school ORDER BY subname"
     logging.info('Query: ' + repr(query))
     cur.execute(query)
     currData.clear()
