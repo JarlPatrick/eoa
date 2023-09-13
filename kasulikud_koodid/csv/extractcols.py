@@ -94,13 +94,27 @@ for p, img in zip(pages, images):
     currStart = None
     currPos = None
     removing = False
+    altAddMode = False
     cv2.namedWindow("page")
     def mouse(event, x, y, flags, _):
         global currStart, currPos
 
         currPos = (x, y)
+        if altAddMode:
+            boxlist = removeBoxes if removing else selectBoxes
+            if boxlist:
+                last = boxlist[-1]
+                last_endx = last[1][0]
+                last_starty = last[0][1]
+                last_endy = last[1][1]
+                currStart = (last_endx, last_starty)
+                currPos = (x, last_endy)
+            else:
+                # not the best default but better than crashing
+                currStart = (0, 0)
+                currPos = (x, y)
         
-        if event == cv2.EVENT_LBUTTONDOWN:
+        if event == cv2.EVENT_LBUTTONDOWN and not altAddMode:
             currStart = (x, y)
         elif event == cv2.EVENT_LBUTTONUP:
             if removing:
@@ -138,7 +152,10 @@ for p, img in zip(pages, images):
             
             cv2.rectangle(img, box[0], box[1], col, lw)
 
-        for box in selectBoxes:
+        if selectBoxes:
+            # highlight the first one as it's used for row detection
+            cv2.rectangle(img, selectBoxes[0][0], selectBoxes[0][1], (255, 200, 0), LINE_WIDTH)
+        for box in selectBoxes[1:]:
             cv2.rectangle(img, box[0], box[1], (255, 0, 0), LINE_WIDTH)
             
         if checkBox is not None:
@@ -172,8 +189,15 @@ for p, img in zip(pages, images):
                 removeBoxes = removeBoxes[::-1]
             else:
                 selectBoxes = selectBoxes[::-1]
+        elif key == ord('a'):
+            altAddMode = not altAddMode
+            currStart = None
 
     prev = selectBoxes, removeBoxes
+
+    # save here in case the parser crashes or something
+    with open("lastboxes.pickle",'wb') as f:
+        f.write(pickle.dumps(prev))
             
     selectBoxes.sort()
 
@@ -216,7 +240,7 @@ for p, img in zip(pages, images):
                         else:
                             rc[ci] += 1
                             cols[ci].append(s)
-    rowCount += max(rc)
+    rowCount += max(rc, default=0)
     for col in cols:
         col += ["" for _ in range(rowCount - len(col))]
 
@@ -225,6 +249,3 @@ with open(args.csv, "w", newline="") as f:
 
     for ri in range(rowCount):
         writer.writerow([col[ri] for col in cols])
-
-with open("lastboxes.pickle",'wb') as f:
-    f.write(pickle.dumps(prev))
