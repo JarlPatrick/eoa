@@ -16,12 +16,11 @@ function get_title($conn, $id): array {
             $out .= "<h2><a href='".$row["tasks_link"]."'>Ülesanded</a></h2>";
         }
 	} else {
-        $out = "<center><h1>DATA ERROR</h1>";
-        $title = "DATA ERROR";
+        return ["found" => false];
     }
 
 	$out .= '<div style="overflow-x:auto;"><table class="sortable">';
-	return ["title" => $title, "html" => $out];
+	return ["found" => true, "title" => $title, "html" => $out];
 }
 
 function get_columns($conn, $id): array {
@@ -62,6 +61,7 @@ function get_contestant_info($conn, $id): array {
 function get_results($conn, $ids): array {
 	$entries = array();
     $idsString = implode(", ", $ids);
+    if($idsString == "") return array();
     $sql = "SELECT * FROM contestant_field
         WHERE task_id IN (".$idsString.")
         ORDER BY FIELD(task_id, ".$idsString.");";
@@ -101,14 +101,14 @@ function has_content($objects, $col): bool {
 function tulemus($conn, $id): array {
 	
     $out = get_title($conn, $id);
+    if(!$out["found"]) {
+        return array("content" => "<h1>404</h1><div>Lehte ei leitud</div>",
+            "status" => 404,
+            "title" => "404 - EOA");
+    }
     $title = $out["title"];
     $out = $out["html"];
 	$columns = get_columns($conn, $id);
-    if (count($columns) == 0) {
-        return array("content" => "<h1>404</h1><div>Lehte ei leitud</div>",
-            "status" => 404,
-        "title" => "404 - EOA");
-    }
 
     $contestantInfoObjects = get_contestant_info($conn, $id);
     $ageGroupHasContent = has_content($contestantInfoObjects, "age_group_name");
