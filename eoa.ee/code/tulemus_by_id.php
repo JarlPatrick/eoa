@@ -1,23 +1,27 @@
 <?php namespace tul_by_id {
 
-function get_title($conn, $id): string {
+function get_title($conn, $id): array {
     $sql = "SELECT subcontest.name AS subcontest_name,
-        contest.name AS contest_name, tasks_link FROM subcontest
+        contest.name AS contest_name, tasks_link, age_group.name AS group_name
+        FROM subcontest
         LEFT JOIN contest ON subcontest.contest_id = contest.id
+        LEFT JOIN age_group ON subcontest.age_group_id = age_group.id
         WHERE subcontest.id=".$id.";";
 	$result = $conn->query($sql);
 	if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         $out = "<center><h1>".$row["contest_name"]."<br>".$row["subcontest_name"]."</h1>";
+        $title = $row["contest_name"] . " - " . $row["group_name"];
         if(!empty($row["tasks_link"])){
             $out .= "<h2><a href='".$row["tasks_link"]."'>Ülesanded</a></h2>";
         }
 	} else {
         $out = "<center><h1>DATA ERROR</h1>";
+        $title = "DATA ERROR";
     }
 
 	$out .= '<div style="overflow-x:auto;"><table class="sortable">';
-	return $out;
+	return ["title" => $title, "html" => $out];
 }
 
 function get_columns($conn, $id): array {
@@ -94,12 +98,16 @@ function has_content($objects, $col): bool {
     return false;
 }
 
-function tulemus($conn, $id): string {
+function tulemus($conn, $id): array {
 	
-	$out = get_title($conn, $id);
+    $out = get_title($conn, $id);
+    $title = $out["title"];
+    $out = $out["html"];
 	$columns = get_columns($conn, $id);
     if (count($columns) == 0) {
-        die("<h1>404</h1><div>Lehte ei leitud</div>");
+        return array("content" => "<h1>404</h1><div>Lehte ei leitud</div>",
+            "status" => 404,
+        "title" => "404 - EOA");
     }
 
     $contestantInfoObjects = get_contestant_info($conn, $id);
@@ -156,7 +164,9 @@ function tulemus($conn, $id): string {
 
 	$out .= "</table></div></center>";
 	
-	return $out;
+	return array("title" => $title." - EOA",
+                    "content" => $out,
+                    "status" => 200);
 
 }
 

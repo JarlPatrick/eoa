@@ -17,7 +17,7 @@
 		return $students;
 	}
 	
-	function hof($conn): string {
+	function hof($conn): array {
 		$students = get_students($conn);
 		
 		$out="<center><h1>Enim olümpiaadidest osa võtnud õpilased:</h1>";
@@ -27,6 +27,6 @@
 			$out.="<tr><td><a href='?name_id=".$s["id"]."'>".$s["name"]."</a></td><td>".$s["participations"]."</td><td>".$s["place1"]."</td><td>".$s["place2"]."</td><td>".$s["place3"]."</td></tr>";
 		}
 		$out.="</table></center>";
-		return $out;
+		return array("content" => $out, "status" => 200, "title" => "Autabel - EOA");
 	}
 }

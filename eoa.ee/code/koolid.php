@@ -17,7 +17,7 @@
 		return $nimed;
 	}
 	
-	function sum_kool($conn): string {
+	function sum_kool($conn): array {
 		$koolid = get_schools($conn);
 		$out="<center><table class='sortable'>";
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>ÕPILASI</th><th>1. KOHTA</th><th>2. KOHTA</th><th>3. KOHTA</th></tr>";
@@ -30,6 +30,6 @@
 			$out.="<td>".$k['place3']."</td></tr>";
 		}
 		$out.="</table></center>";
-		return $out;
+		return array("content" => $out, "status" => 200, "title" => "Koolid - EOA");
 	}
 }
