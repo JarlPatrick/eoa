@@ -2,12 +2,13 @@
 
 function get_title($conn, $id): array {
     $sql = "SELECT subcontest.name AS subcontest_name,
-        contest.name AS contest_name, tasks_link, age_group.name AS group_name
+        contest.name AS contest_name, tasks_link, description, age_group.name AS group_name
         FROM subcontest
         LEFT JOIN contest ON subcontest.contest_id = contest.id
         LEFT JOIN age_group ON subcontest.age_group_id = age_group.id
         WHERE subcontest.id=".$id.";";
-	$result = $conn->query($sql);
+    $result = $conn->query($sql);
+    $footer = "";
 	if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         $out = "<center><h1>".$row["contest_name"]."<br>".$row["subcontest_name"]."</h1>";
@@ -15,12 +16,15 @@ function get_title($conn, $id): array {
         if(!empty($row["tasks_link"])){
             $out .= "<h2><a href='".$row["tasks_link"]."'>Ülesanded</a></h2>";
         }
+        if(!empty($row["description"])) {
+            $footer .= "<p>".htmlspecialchars($row["description"])."</p>";
+        }
 	} else {
         return ["found" => false];
     }
 
 	$out .= '<div style="overflow-x:auto;"><table class="sortable">';
-	return ["found" => true, "title" => $title, "html" => $out];
+	return ["found" => true, "title" => $title, "html" => $out, "footer" => $footer];
 }
 
 function get_columns($conn, $id): array {
@@ -107,6 +111,7 @@ function tulemus($conn, $id): array {
             "title" => "404 - EOA");
     }
     $title = $out["title"];
+    $footer = $out["footer"];
     $out = $out["html"];
 	$columns = get_columns($conn, $id);
 
@@ -162,7 +167,7 @@ function tulemus($conn, $id): array {
 
     }
 
-	$out .= "</table></div></center>";
+	$out .= "</table></div>" . $footer . "</center>";
 	
 	return array("title" => $title." - EOA",
                     "content" => $out,
