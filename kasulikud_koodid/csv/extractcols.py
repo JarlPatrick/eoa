@@ -199,7 +199,7 @@ for p, img in zip(pages, images):
     with open("lastboxes.pickle",'wb') as f:
         f.write(pickle.dumps(prev))
             
-    selectBoxes.sort()
+    #selectBoxes.sort()
 
     newBoxes = []
     for chars, box in boxes:
