@@ -173,7 +173,8 @@ def addSubcontest(subcontest, contestId):
     subcontestId = createRow('subcontest',
                          contest_id = str(contestId),
                          age_group_id = str(ageGroupId),
-                         name = subcontest['name'])
+                         name = subcontest['name'],
+                         description = subcontest['description'])
 
     # Create columns
     columns = []
@@ -217,6 +218,7 @@ def addContest(contest, dryRun = False):
         typeId = getMakeRow('type', name = contest['type'])
         subjectId = getMakeRow('subject', name = contest['subject'])
         # Create contest
+        # todo should actually not be getMakeRow.... want year+type_id+subject_id to be unique
         contestId = getMakeRow('contest',
                               year = contest["year"],
                               type_id = typeId,

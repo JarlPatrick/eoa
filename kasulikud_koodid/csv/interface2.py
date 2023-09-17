@@ -15,9 +15,10 @@ contestFields = [
     {"name": "year", "display": "Year"},
     {"name": "subcontest_name", "display": "Subcontest name"},
     {"name": "class_range", "display": "Class range"},
+    {"name": "description", "display": "Description"},
 ]
 
-subcontestNames = {"subcontest_name", "class_range"}
+subcontestNames = {"subcontest_name", "class_range", "description"}
 
 specialColumns = [
     {"name": "placement", "color": "#dd3030"},
@@ -292,7 +293,7 @@ def highlightGrid():
                 row[sc["coli"]].configure(background=sc["color"])
 
 def importTable(*_):
-    if any(field["entry"].get() == "" for field in contestFields):
+    if any(field["entry"].get() == "" for field in contestFields if field["name"] != "description"):
         warn("Missing contest information")
         return
 
