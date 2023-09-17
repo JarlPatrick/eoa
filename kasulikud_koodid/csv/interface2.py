@@ -37,6 +37,7 @@ inferContest = {
         {"pattern": "eko|keemia", "value": "Keemia"},
         {"pattern": "inf", "value": "Informaatika"},
         {"pattern": "ego", "value": "Geograafia"},
+        {"pattern": "ebo", "value": "Bioloogia"},
     ],
     "type": [
         {"pattern": "lv[0-9st]", "value": "Lahtine"},
@@ -44,6 +45,7 @@ inferContest = {
         {"pattern": "lah", "value": "Lahtine"},
     ],
     "class_range": [
+        {"pattern": "(^|[^1-9])6k", "value": "6,6,6"},
         {"pattern": "(^|[^1-9])7k", "value": "7,7,7"},
         {"pattern": "(^|[^1-9])8k", "value": "8,8,8"},
         {"pattern": "(^|[^1-9])9k", "value": "9,9,9"},
@@ -463,7 +465,7 @@ def genPlacementAction(*_):
         # Skip the header
         next(rows)
         for row in rows:
-            s = float(row[total]["text"].replace(",", "."))
+            s = float(row[total]["text"].replace(",", ".").replace('%',''))
             currPlace += 1
             if s < lastS:
                 row[placement].configure(text=str(currPlace))
