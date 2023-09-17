@@ -2,10 +2,15 @@
 
 function get_title($conn, $id): array {
     $sql = "SELECT subcontest.name AS subcontest_name,
-        contest.name AS contest_name, tasks_link, description, contest.year as year, age_group.name AS group_name
+        contest.name AS contest_name, tasks_link, description,
+        age_group.name AS group_name,
+        contest.year as year, subject.name as subj_name,
+        type.name as type_name
         FROM subcontest
         LEFT JOIN contest ON subcontest.contest_id = contest.id
         LEFT JOIN age_group ON subcontest.age_group_id = age_group.id
+        LEFT JOIN subject ON contest.subject_id = subject.id
+        LEFT JOIN type ON contest.type_id = type.id
         WHERE subcontest.id=".$id.";";
     $result = $conn->query($sql);
     $footer = "";
@@ -17,7 +22,7 @@ function get_title($conn, $id): array {
             $cname = $cname . " (" . $year . "/" . ($year+1) . ")";
         }
         $out = "<center><h1>".$cname."<br>".$row["subcontest_name"]."</h1>";
-        $title = $row["contest_name"] . " - " . $row["group_name"];
+        $title = $row["subj_name"] . " " . mb_strtolower($row["type_name"]) . " " . $year . "/" . ($year+1) . " - " . $row["group_name"];
         if(!empty($row["tasks_link"])){
             $out .= "<h2><a href='".$row["tasks_link"]."'>Ülesanded</a></h2>";
         }
