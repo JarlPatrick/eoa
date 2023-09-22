@@ -1,5 +1,6 @@
 
 import argparse
+import pickle
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextLineHorizontal, LTChar
 from typing import Iterable
@@ -23,6 +24,11 @@ if args.csv is None:
 pages = extract_pages(args.pdf)
 
 images = pdf2image.convert_from_path(args.pdf)
+try:
+    with open("lastboxes.pickle",'rb') as f:
+        prev = pickle.loads(f.read())
+except:
+    prev = ([], [])
 
 def get_texts(root):
     if isinstance(root, LTTextLineHorizontal):
@@ -88,13 +94,27 @@ for p, img in zip(pages, images):
     currStart = None
     currPos = None
     removing = False
+    altAddMode = False
     cv2.namedWindow("page")
     def mouse(event, x, y, flags, _):
         global currStart, currPos
 
         currPos = (x, y)
+        if altAddMode:
+            boxlist = removeBoxes if removing else selectBoxes
+            if boxlist:
+                last = boxlist[-1]
+                last_endx = last[1][0]
+                last_starty = last[0][1]
+                last_endy = last[1][1]
+                currStart = (last_endx, last_starty)
+                currPos = (x, last_endy)
+            else:
+                # not the best default but better than crashing
+                currStart = (0, 0)
+                currPos = (x, y)
         
-        if event == cv2.EVENT_LBUTTONDOWN:
+        if event == cv2.EVENT_LBUTTONDOWN and not altAddMode:
             currStart = (x, y)
         elif event == cv2.EVENT_LBUTTONUP:
             if removing:
@@ -132,7 +152,10 @@ for p, img in zip(pages, images):
             
             cv2.rectangle(img, box[0], box[1], col, lw)
 
-        for box in selectBoxes:
+        if selectBoxes:
+            # highlight the first one as it's used for row detection
+            cv2.rectangle(img, selectBoxes[0][0], selectBoxes[0][1], (255, 200, 0), LINE_WIDTH)
+        for box in selectBoxes[1:]:
             cv2.rectangle(img, box[0], box[1], (255, 0, 0), LINE_WIDTH)
             
         if checkBox is not None:
@@ -161,10 +184,22 @@ for p, img in zip(pages, images):
             selectBoxes.clear()
         elif key == ord('p'):
             selectBoxes, removeBoxes = prev
+        elif key == ord('f'):
+            if removing:
+                removeBoxes = removeBoxes[::-1]
+            else:
+                selectBoxes = selectBoxes[::-1]
+        elif key == ord('a'):
+            altAddMode = not altAddMode
+            currStart = None
 
     prev = selectBoxes, removeBoxes
+
+    # save here in case the parser crashes or something
+    with open("lastboxes.pickle",'wb') as f:
+        f.write(pickle.dumps(prev))
             
-    selectBoxes.sort()
+    #selectBoxes.sort()
 
     newBoxes = []
     for chars, box in boxes:
@@ -176,6 +211,7 @@ for p, img in zip(pages, images):
     boxes = newBoxes
     
     rc = []
+    lineYs = []
     for ci, selectBox in enumerate(selectBoxes):
         if len(cols) == ci:
             cols.append(["" for _ in range(rowCount)])
@@ -189,10 +225,22 @@ for p, img in zip(pages, images):
                         s.append(ch.get_text())
                 s = "".join(s).strip()
                 if len(s) > 0:
-                    rc[ci] += 1
-                    cols[ci].append(s)
-
-    rowCount += max(rc)
+                    if ci == 0:
+                        lineYs.append(box[0][1])
+                        rc[ci] += 1
+                        cols[ci].append(s)
+                    else:
+                        while len(lineYs) > rc[ci] and lineYs[rc[ci]] < box[0][1] - 4:
+                            # this box is too far down - there must have been blanks before
+                            rc[ci] += 1
+                            cols[ci].append("")
+                        if len(lineYs) > rc[ci] and box[0][1] < lineYs[rc[ci]] - 4:
+                            # this box is too far up - should be a part of the previous value
+                            cols[ci][-1] += '\n' + s
+                        else:
+                            rc[ci] += 1
+                            cols[ci].append(s)
+    rowCount += max(rc, default=0)
     for col in cols:
         col += ["" for _ in range(rowCount - len(col))]
 
@@ -201,4 +249,3 @@ with open(args.csv, "w", newline="") as f:
 
     for ri in range(rowCount):
         writer.writerow([col[ri] for col in cols])
-

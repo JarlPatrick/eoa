@@ -15,9 +15,10 @@ contestFields = [
     {"name": "year", "display": "Year"},
     {"name": "subcontest_name", "display": "Subcontest name"},
     {"name": "class_range", "display": "Class range"},
+    {"name": "description", "display": "Description"},
 ]
 
-subcontestNames = {"subcontest_name", "class_range"}
+subcontestNames = {"subcontest_name", "class_range", "description"}
 
 specialColumns = [
     {"name": "placement", "color": "#dd3030"},
@@ -37,6 +38,7 @@ inferContest = {
         {"pattern": "eko|keemia", "value": "Keemia"},
         {"pattern": "inf", "value": "Informaatika"},
         {"pattern": "ego", "value": "Geograafia"},
+        {"pattern": "ebo", "value": "Bioloogia"},
     ],
     "type": [
         {"pattern": "lv[0-9st]", "value": "Lahtine"},
@@ -44,6 +46,7 @@ inferContest = {
         {"pattern": "lah", "value": "Lahtine"},
     ],
     "class_range": [
+        {"pattern": "(^|[^1-9])6k", "value": "6,6,6"},
         {"pattern": "(^|[^1-9])7k", "value": "7,7,7"},
         {"pattern": "(^|[^1-9])8k", "value": "8,8,8"},
         {"pattern": "(^|[^1-9])9k", "value": "9,9,9"},
@@ -255,21 +258,27 @@ def inferFields(filename):
                 break
     highlightGrid()
 
+lastOpenedFile = None
 """
 "Open file" action performed
 """
 def openFile():
+    global lastOpenedFile
     # file dialog
     filename = askopenfilename(filetypes=[("CSV",".csv"), ("File", "*")])
     if filename == ():
         # cancelled
         return
 
-    print(filename)
-    with open(filename) as inFile:
+    lastOpenedFile = filename
+    reopenFile()
+
+def reopenFile():
+    print(lastOpenedFile)
+    with open(lastOpenedFile) as inFile:
         parseCSV(inFile)
 
-    inferFields(filename)
+    inferFields(lastOpenedFile)
     highlightGrid()
 
 def highlightGrid():
@@ -284,7 +293,7 @@ def highlightGrid():
                 row[sc["coli"]].configure(background=sc["color"])
 
 def importTable(*_):
-    if any(field["entry"].get() == "" for field in contestFields):
+    if any(field["entry"].get() == "" for field in contestFields if field["name"] != "description"):
         warn("Missing contest information")
         return
 
@@ -366,9 +375,11 @@ defaultColor = root.cget("bg")
 toolbar = tk.Frame(root)
 toolbar.pack(fill=tk.X, side=tk.TOP)
 openButton = tk.Button(toolbar, text="Open", command=openFile)
-openButton.pack()
+openButton.pack(side='left')
+reloadButton = tk.Button(toolbar, text="Reload", command=reopenFile)
+reloadButton.pack(side='left')
 importButton = tk.Button(toolbar, text="Import", command=importTable)
-importButton.pack()
+importButton.pack(side='left')
 
 # contest info
 contestInfo = tk.Frame(root)
@@ -455,7 +466,7 @@ def genPlacementAction(*_):
         # Skip the header
         next(rows)
         for row in rows:
-            s = float(row[total]["text"].replace(",", "."))
+            s = float(row[total]["text"].replace(",", ".").replace('%',''))
             currPlace += 1
             if s < lastS:
                 row[placement].configure(text=str(currPlace))

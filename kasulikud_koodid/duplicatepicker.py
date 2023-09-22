@@ -1,4 +1,6 @@
 from tkinter import *
+import os
+import json
 from itertools import chain
 
 import logging
@@ -7,10 +9,12 @@ logging.info('Running!')
 
 import mysql.connector
 
-mysql_user = ""
-mysql_passwd = ""
-mysql_db = ""
-mysql_host = ""
+with open(os.path.join(os.path.dirname(__file__),"credentials.json")) as f:
+    config = json.loads(f.read())
+mysql_user = config["user"]
+mysql_passwd = config["password"]
+mysql_db = config["database"]
+mysql_host = config["host"]
 conn = mysql.connector.connect(user=mysql_user, password=mysql_passwd, database=mysql_db, host=mysql_host)
 cur = conn.cursor()
 
@@ -23,7 +27,7 @@ maxL = [0, 0, 0]
 
 def getAll():
     global maxL
-    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '|')) subname FROM person ORDER BY subname LIMIT 10000"
+    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '|')) subname FROM person ORDER BY subname"
     logging.info('Query: ' + repr(query))
     cur.execute(query)
     currData.clear()

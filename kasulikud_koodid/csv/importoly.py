@@ -10,16 +10,20 @@ differing case), so duplicates might occur. Care should be taken especially
 with contest and subcontest identifiers (year, subject, type, age group, name).
 """
 
+import os
+import json
 import mysql.connector
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
 # Credentials
-mysql_user = ""
-mysql_passwd = ""
-mysql_db = "eoa"
-mysql_host = "eoa.ee"
+with open(os.path.join(os.path.dirname(__file__),"../credentials.json")) as f:
+    config = json.loads(f.read())
+mysql_user = config["user"]
+mysql_passwd = config["password"]
+mysql_db = config["database"]
+mysql_host = config["host"]
 
 conn = mysql.connector.connect(user=mysql_user, password=mysql_passwd, database=mysql_db, host=mysql_host)
 cur = conn.cursor()
@@ -73,6 +77,23 @@ def getMakeRow(table, getId = True, **params):
     row_cache[(table, *paramsList)] = result
     return result
 
+# separate from row_cache because we need to store info from 2 tables (sort of)
+school_cache = {}
+def getSchoolId(name: str):
+    if name in school_cache:
+        return school_cache[name]
+    execute("SELECT correct FROM school_alias WHERE name = %s", (name,))
+    for id, in cur:
+        school_cache[name] = id
+        return id
+    execute("SELECT id FROM school WHERE name = %s", (name,))
+    for id, in cur:
+        school_cache[name] = id
+        return id
+    res = createRow("school", name = name)
+    school_cache[name] = res
+    return res
+
 """
 Add a contestant
 Expects a dictionary containing:
@@ -99,7 +120,7 @@ def addContestant(contestant, subcontestId, columnIds):
     # Get school
     schoolId = None
     if contestant['school'] is not None and contestant['school'] != '':
-        schoolId = getMakeRow('school', name = contestant['school'])
+        schoolId = getSchoolId(contestant['school'])
 
     # Create contestant
     contestantId = createRow('contestant',
@@ -145,13 +166,15 @@ def addSubcontest(subcontest, contestId):
                        min_class = str(subcontest['class_range'][0]),
                        max_class = str(subcontest['class_range'][1]))
 
+    execute("SELECT id FROM subcontest WHERE contest_id = %s AND age_group_id = %s", (str(contestId), str(ageGroupId)))
+    if cur.fetchone():
+        raise Exception("this contest already has this subcontest")
     # Create subcontest
-    # should be createRow but we want to catch duplicate subcontests
-    # and this will cause duplicate key errors
-    subcontestId = getMakeRow('subcontest',
+    subcontestId = createRow('subcontest',
                          contest_id = str(contestId),
                          age_group_id = str(ageGroupId),
-                         name = subcontest['name'])
+                         name = subcontest['name'],
+                         description = subcontest['description'])
 
     # Create columns
     columns = []
@@ -195,6 +218,7 @@ def addContest(contest, dryRun = False):
         typeId = getMakeRow('type', name = contest['type'])
         subjectId = getMakeRow('subject', name = contest['subject'])
         # Create contest
+        # todo should actually not be getMakeRow.... want year+type_id+subject_id to be unique
         contestId = getMakeRow('contest',
                               year = contest["year"],
                               type_id = typeId,
@@ -213,6 +237,8 @@ def addContest(contest, dryRun = False):
             info("Contest added")
     except Exception as e:
         conn.rollback()
+        row_cache.clear()
+        school_cache.clear()
         logging.exception(e)
         raise Exception()
 

@@ -14,6 +14,8 @@ The search box searches from the id, original name and a "normalized" name (all 
 """
 
 from tkinter import *
+import os
+import json
 from itertools import chain
 
 import logging
@@ -22,10 +24,12 @@ logging.info('Running!')
 
 import mysql.connector
 
-mysql_user = ""
-mysql_passwd = ""
-mysql_db = "eoa"
-mysql_host = "eoa.ee"
+with open(os.path.join(os.path.dirname(__file__),"credentials.json")) as f:
+    config = json.loads(f.read())
+mysql_user = config["user"]
+mysql_passwd = config["password"]
+mysql_db = config["database"]
+mysql_host = config["host"]
 conn = mysql.connector.connect(user=mysql_user, password=mysql_passwd, database=mysql_db, host=mysql_host)
 cur = conn.cursor()
 
@@ -38,21 +42,15 @@ maxL = [0, 0, 0]
 
 def getAll():
     global maxL
-    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname FROM school ORDER BY subname LIMIT 10000"
+    query = "SELECT id, name, UPPER(REGEXP_REPLACE(name, '[^[:alnum:]]+', '')) subname, (SELECT COUNT(*) FROM contestant WHERE contestant.school_id = school.id) freq FROM school ORDER BY subname"
     logging.info('Query: ' + repr(query))
     cur.execute(query)
     currData.clear()
-    maxL = [0, 0, 0]
-    for id, name, subname in cur:
-        currData.append((id, name, subname))
-        for i, s in enumerate((str(id), name, subname)):
+    maxL = [0, 0, 0, 0]
+    for id, name, subname, freq in cur:
+        currData.append((id, name, subname, freq))
+        for i, s in enumerate((str(id), name, subname, str(freq))):
             maxL[i] = max(maxL[i], len(s))
-
-    for id, name, subname in currData:
-        id, name, subname = (str(a).ljust(l) for a, l in zip((id, name, subname), maxL))
-        s = f'{id}    {name}    {subname}'
-        chooseBox.insert(END, s)
-        destBox.insert(END, s)
 
     searchMap.clear()
     chooseBox.selection_clear(0, END)
@@ -74,7 +72,7 @@ def message(text):
     button = Button(popup, text='OK', command=okCallback)
     button.pack(side=BOTTOM, fill=X)
 
-def replaceSchools():
+def replaceSchools(saveAlias):
     try:
         replacement = currData[searchMap[next(i for i in destBox.curselection())]]
     except StopIteration:
@@ -95,11 +93,12 @@ def replaceSchools():
         cur.execute(query, t)
         logging.debug('Affected: ' + str(cur.rowcount))
 
-        query = 'REPLACE INTO school_alias(name, correct) VALUES (%s, %s)'
-        t = [(p[1], replacement[0]) for p in schools]
-        logging.debug('Query: ' + repr(query) + ', ' + repr(t))
-        cur.executemany(query, t)
-        logging.debug('Affected: ' + str(cur.rowcount))
+        if saveAlias:
+            query = 'REPLACE INTO school_alias(name, correct) VALUES (%s, %s)'
+            t = [(p[1], replacement[0]) for p in schools]
+            logging.debug('Query: ' + repr(query) + ', ' + repr(t))
+            cur.executemany(query, t)
+            logging.debug('Affected: ' + str(cur.rowcount))
 
         query = 'UPDATE contestant SET school_id = %s WHERE school_id IN '  + school_tuple
         t = tuple(map(str, chain([replacement[0]], (p[0] for p in schools))))
@@ -167,8 +166,8 @@ def doSearch(*_):
 
     for i in searchMap:
         t = currData[i]
-        id, name, subname = (str(a).ljust(l) for a, l in zip(t, maxL))
-        s = f'{id}    {name}    {subname}'
+        id, name, subname, freq = (str(a).ljust(l) for a, l in zip(t, maxL))
+        s = f'id:{id} #:{freq}    {name}    {subname}'
         chooseBox.insert(END, s)
         destBox.insert(END, s)
         if i in selectedL:
@@ -234,22 +233,25 @@ buttonFrame.grid(row=1, column=0, sticky=E+W)
 queryAll = Button(buttonFrame, text="Query all", command=getAll)
 queryAll.grid(row=0, column=0)
 
-def replaceCommand():
+def replaceCommand(saveAlias):
     count = len(chooseBox.curselection())
-    confirm(f'Are you sure?\nReplacing {count} row' + ('' if count == 1 else 's') + '.', replaceSchools)
+    confirm(f'Are you sure?\nReplacing {count} row' + ('' if count == 1 else 's') + '.', lambda: replaceSchools(saveAlias))
 
-replaceButton = Button(buttonFrame, text="Replace", command=replaceCommand)
+replaceButton = Button(buttonFrame, text="Replace", command=lambda: replaceCommand(True))
 replaceButton.grid(row=0, column=1)
+replaceNoaliasButton = Button(buttonFrame, text="Replace (no alias)", command=lambda: replaceCommand(False))
+replaceNoaliasButton.grid(row=0, column=2)
 
 searchVar = StringVar()
 searchVar.trace_add("write", doSearch)
 
 searchBox = Entry(buttonFrame, textvariable=searchVar)
-searchBox.grid(row=0, column=2, sticky=E+W)
+searchBox.grid(row=0, column=3, sticky=E+W)
 
 buttonFrame.columnconfigure(0, weight=0)
 buttonFrame.columnconfigure(1, weight=0)
-buttonFrame.columnconfigure(2, weight=1)
+buttonFrame.columnconfigure(2, weight=0)
+buttonFrame.columnconfigure(3, weight=1)
 buttonFrame.rowconfigure(0, weight=1)
 
 master.columnconfigure(0, weight=1)
