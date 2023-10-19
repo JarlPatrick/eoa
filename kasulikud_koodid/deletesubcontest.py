@@ -10,6 +10,8 @@ extra columns and contestant data.
 """
 
 import sys
+import os
+import json
 import mysql.connector
 
 if len(sys.argv) < 2:
@@ -19,11 +21,12 @@ if len(sys.argv) < 2:
 id = sys.argv[1]
 
 # Credentials
-mysql_user = ""
-mysql_passwd = ""
-mysql_db = "eoa"
-mysql_host = "eoa.ee"
-
+with open(os.path.join(os.path.dirname(__file__),"credentials.json")) as f:
+    config = json.loads(f.read())
+mysql_user = config["user"]
+mysql_passwd = config["password"]
+mysql_db = config["database"]
+mysql_host = config["host"]
 
 conn = mysql.connector.connect(user=mysql_user, password=mysql_passwd, database=mysql_db, host=mysql_host)
 cur = conn.cursor()
