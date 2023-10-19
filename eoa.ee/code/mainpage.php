@@ -68,13 +68,15 @@
 		return $out;
 	}
 	
-	function get_mainpage($conn): string {
+	function get_mainpage($conn): array {
 		$out = "<center>";
 		$out .= "<h1>Tegemist on Eesti olümpiaadide andmebaasi koduleheküljega</h1><br>";
 		$out .= main_stats($conn);
 		$out .= this_year_results($conn);
 		$out .= "</center>";
-		return $out;
+                return array("title" => "Eesti Olümpiaadide Andmebaas",
+                    "content" => $out,
+                    "status" => 200);
 	}
 
 }

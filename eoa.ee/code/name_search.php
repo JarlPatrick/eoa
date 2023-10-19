@@ -70,7 +70,9 @@ function get_mentees($conn, $id): array {
 function person_profile($conn, $id){
 	$name = name_by_id($conn, $id);
 	if($name == "") {
-        die("<h1>404</h1><div>Lehte ei leitud</div>");
+		return array("content" => "<h1>404</h1><div>Lehte ei leitud</div>",
+			"status" => 404,
+			"title" => "404 - EOA");
 	}
 	
 	$out="<center><br><h1>".$name." profiil </h1><br>";
@@ -118,17 +120,21 @@ function person_profile($conn, $id){
 		}
 		$out.= "</table>";
 	}
-	return $out;
+	return array("content" => $out, "status" => 200, "title" => $name . " - EOA");
 }
 
 function search($conn, $name){
 	$names = find_by_name($conn, $name);
 	if(count($names) > 1){
-		return multi_name($names,$name);
+		$out = multi_name($names,$name);
+		return array("content" => $out, "status" => 200, "title" => $name . " - otsing - EOA");
 	} elseif(count($names) == 1){
 		foreach ($names as $id=>$name){
 			return person_profile($conn, $id);
 		}
+	} else {
+		return array("content" => "<div>Otsingule vastavaid nimesid ei leitud.</div>",
+			"status" => 200, "title" => $name . " - otsing - EOA");
 	}
 }
 

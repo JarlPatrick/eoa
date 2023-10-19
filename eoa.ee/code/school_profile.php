@@ -53,10 +53,12 @@
 		return $out;
 	}
 	
-	function get_profile($conn, $s_id): string {
+	function get_profile($conn, $s_id): array {
 		$school_name = school_name($conn, $s_id);
         if($school_name == "") {
-            die("<h1>404</h1><div>Lehte ei leitud</div>");
+			return array("content" => "<h1>404</h1><div>Lehte ei leitud</div>",
+				"status" => 404,
+				"title" => "404 - EOA");
         }
 		$names = all_names($conn);
 		$conts = all_conts($conn, $s_id);
@@ -101,7 +103,7 @@
 		
 		$out.="</center>";
 		
-		return $out;
+		return array("content" => $out, "status" => 200, "title" => $school_name." - EOA");
 	}
 	
 }
