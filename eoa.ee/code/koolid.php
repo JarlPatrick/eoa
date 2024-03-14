@@ -1,12 +1,13 @@
 <?php namespace koolid {
 	
 	function get_schools($conn): array {
-		$sql = "SELECT school.name name, school.id id, count(*) participations, count(distinct contestant.person_id) students,
-				count(case when contestant.placement = 1 then 1 end) place1,
-				count(case when contestant.placement = 2 then 1 end) place2,
-				count(case when contestant.placement = 3 then 1 end) place3
+		$sql = "SELECT school.name name, school.id id, COUNT(*) participations, COUNT(DISTINCT contestant.person_id) students,
+				COUNT(CASE WHEN contestant.placement = 1 THEN 1 END) place1,
+				COUNT(CASE WHEN contestant.placement = 2 THEN 1 END) place2,
+				COUNT(CASE WHEN contestant.placement = 3 THEN 1 END) place3,
+                COUNT(CASE WHEN contestant.placement >= 1 AND contestant.placement <= 3 THEN 1 END) places_top3
 			FROM school INNER JOIN contestant ON contestant.school_id = school.id GROUP BY school.id
-			ORDER BY participations DESC, place1 + place2 + place3 DESC, place1 DESC, place2 DESC, place3 DESC;";
+			ORDER BY participations DESC, places_top3 DESC, place1 DESC, place2 DESC, place3 DESC;";
 		$result = $conn->query($sql);
 		$nimed = array();
 		if ($result->num_rows > 0) {

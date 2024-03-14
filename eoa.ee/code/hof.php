@@ -3,10 +3,11 @@
 		$sql = "SELECT person.id id, person.name name, COUNT(*) participations,
 				COUNT(CASE WHEN contestant.placement = 1 THEN 1 END) place1,
 				COUNT(CASE WHEN contestant.placement = 2 THEN 1 END) place2,
-				COUNT(CASE WHEN contestant.placement = 3 THEN 1 END) place3
+				COUNT(CASE WHEN contestant.placement = 3 THEN 1 END) place3,
+                COUNT(CASE WHEN contestant.placement >= 1 and contestant.placement <= 3 THEN 1 END) places_top3
 			FROM person INNER JOIN contestant ON contestant.person_id = person.id GROUP BY person.id
-			HAVING place1 + place2 + place3 > 0 OR participations >= 8
-			ORDER BY participations DESC, place1 + place2 + place3 DESC, place1 DESC, place2 DESC, place3 DESC;";
+			HAVING places_top3 > 0 OR participations >= 8
+			ORDER BY participations DESC, places_top3 DESC, place1 DESC, place2 DESC, place3 DESC;";
 		$result = $conn->query($sql);
 		$students = array();
 		if ($result->num_rows > 0) {
