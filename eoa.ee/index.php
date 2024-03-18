@@ -42,7 +42,7 @@ if(!empty($_GET['id'])){
 http_response_code($page_content['status']);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="et">
   <head>
     <meta charset="UTF-8">
     <title><?= $page_content['title'] ?></title>
