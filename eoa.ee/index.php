@@ -57,6 +57,7 @@ if($_SERVER['REQUEST_URI'] != '/')
     <link rel="stylesheet" href="/eoa.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="sorttable.js" type="text/javascript"></script>
+    <script>sorttable.sort_alpha = function(a,b) { return a[0].localeCompare(b[0], document.documentElement.lang); }</script>
     <script src="eoa.js" type="text/javascript"></script>
   </head>
   <body>
