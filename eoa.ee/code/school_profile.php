@@ -87,17 +87,17 @@
 		$out="<center><br>";
 		$out.= "<h1>".$school_name."</h1><br>";
 		
-		$out.="<div style='overflow-x:auto;'><table style='float: left'><tr>";
+		$out.="<div style='overflow-x:auto;'><table style='float: left' class='sortable'>";
 		$out.= "<tr><th>Juhendaja</th><th>Juhendamisi</th></tr>";
 		usort($mentors, function($a, $b) {	return $b[0] <=> $a[0];	});
 		foreach ($mentors as $id=>$m){
-			$out.="<tr><td><a href='?name_id=".$m[1]."'>".$names[$m[1]]."</a></td><td>".$m[0]."</td></tr>";
+			$out.="<tr><td><a href='?name_id=".$m[1]."'>".$names[$m[1]]."</a></td><td sorttable_customkey=".-$m[0].">".$m[0]."</td></tr>";
 		}
-		$out.="</table><table style='float: right'>";
+		$out.="</table><table style='float: right' class='sortable'>";
 		$out.= "<tr><th>Õpilane</th><th>Osalemisi</th></tr>";
 		usort($student, function($a, $b) {	return $b[0] <=> $a[0];	});
 		foreach ($student as $id=>$s){
-			$out.="<tr><td><a href='?name_id=".$s[1]."'>".$names[$s[1]]."</a></td><td>".$s[0]."</td></tr>";
+			$out.="<tr><td><a href='?name_id=".$s[1]."'>".$names[$s[1]]."</a></td><td sorttable_customkey=".-$s[0].">".$s[0]."</td></tr>";
 		}
 		$out.="</table></div>";
 		
