@@ -87,7 +87,7 @@
 		$out="<center><br>";
 		$out.= "<h1>".$school_name."</h1><br>";
 		
-		$out.="<div><table style='float: left'><tr>";
+		$out.="<div style='overflow-x:auto;'><table style='float: left'><tr>";
 		$out.= "<tr><th>Juhendaja</th><th>Juhendamisi</th></tr>";
 		usort($mentors, function($a, $b) {	return $b[0] <=> $a[0];	});
 		foreach ($mentors as $id=>$m){
