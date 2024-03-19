@@ -24,11 +24,11 @@
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>ÕPILASI</th><th>1. KOHTA</th><th>2. KOHTA</th><th>3. KOHTA</th></tr>";
 		foreach($koolid as &$k){
 			$out.="<tr><td><a href='?school_id=".$k['id']."'>".$k['name']."</a></td>";
-			$out.="<td>".$k['participations']."</td>";
-			$out.="<td>".$k['students']."</td>";
-			$out.="<td>".$k['place1']."</td>";
-			$out.="<td>".$k['place2']."</td>";
-			$out.="<td>".$k['place3']."</td></tr>";
+			$out.="<td sorttable_customkey=".-$k['participations'].">".$k['participations']."</td>";
+			$out.="<td sorttable_customkey=".-$k['students'].">".$k['students']."</td>";
+			$out.="<td sorttable_customkey=".-$k['place1'].">".$k['place1']."</td>";
+			$out.="<td sorttable_customkey=".-$k['place2'].">".$k['place2']."</td>";
+			$out.="<td sorttable_customkey=".-$k['place3'].">".$k['place3']."</td></tr>";
 		}
 		$out.="</table></center>";
 		return array("content" => $out, "status" => 200, "title" => "Koolid - EOA");
