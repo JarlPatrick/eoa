@@ -25,7 +25,7 @@
 		$out.="<table class='sortable'>";
 		$out.="<tr><th>NIMI</th><th>OSAVÕTTE</th><th>1. KOHTI</th><th>2. KOHTI</th><th>3. KOHTI</th></tr>";
 		foreach($students as &$s){
-			$out.="<tr><td><a href='?name_id=".$s["id"]."'>".$s["name"]."</a></td><td>".$s["participations"]."</td><td>".$s["place1"]."</td><td>".$s["place2"]."</td><td>".$s["place3"]."</td></tr>";
+			$out.="<tr><td><a href='?name_id=".$s["id"]."'>".$s["name"]."</a></td><td sorttable_customkey=".-$s["participations"].">".$s["participations"]."</td><td sorttable_customkey=".-$s["place1"].">".$s["place1"]."</td><td sorttable_customkey=".-$s["place2"].">".$s["place2"]."</td><td sorttable_customkey=".-$s["place3"].">".$s["place3"]."</td></tr>";
 		}
 		$out.="</table></center>";
 		return array("content" => $out, "status" => 200, "title" => "Autabel - EOA");
