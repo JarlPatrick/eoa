@@ -169,7 +169,22 @@ function tulemus($conn, $id): array {
                 $mentors = array();
             }
             foreach ($taskIDs as $taskID){
-                $out .="<td>".$results[$taskID][$contestantInfoObject["contestant_id"]]."</td>";
+                $value = $results[$taskID][$contestantInfoObject["contestant_id"]];
+                if ($value === null || trim($value) === '') {
+                    $customKey = 5;
+                } elseif ($value === 'D') {
+                    $customKey = 4;
+                } elseif ($value === 'III') {
+                    $customKey = 3;
+                } elseif ($value === 'II') {
+                    $customKey = 2;
+                } elseif ($value === 'I') {
+                    $customKey = 1;
+                } else {
+                    $customKey = -str_replace(',', '.', $value);
+                    $value = str_replace('.', ',', $value);
+                }
+                $out .="<td sorttable_customkey=".$customKey.">".$value."</td>";
             }
         } else {
             $mentors[] = array("id" => $contestantInfoObject["mentor_id"], "name" => $contestantInfoObject["mentor_name"]);
