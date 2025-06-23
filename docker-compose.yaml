@@ -1,0 +1,36 @@
+name: eoa
+
+services:
+  mariadb:
+    image: mariadb:10.11.13
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: eoa
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: eoamanager
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+        - mariadb_data:/var/lib/mysql
+        - ./backups/initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "${DB_PORT:-3306}:3306"
+  php:
+    build: 
+      context: ./eoa.ee
+    container_name: php
+    restart: unless-stopped
+    volumes:
+      - ./eoa.ee:/var/www/html
+    ports:
+      - "${PHP_PORT:-8080}:80"
+    depends_on:
+      - mariadb
+    environment:
+          DB_HOST: mariadb
+          DB_NAME: eoa
+          DB_USER: eoamanager
+          DB_PASSWORD: ${MYSQL_PASSWORD}
+      
+volumes:
+  mariadb_data:

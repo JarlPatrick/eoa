@@ -25,3 +25,9 @@ For help contact <eoakontakt@gmail.com>.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Local deployment using Docker Compose
+
+1. Copy `.env.example` to `.env` and add required variables.
+2. Copy `./eoa.ee/credentials.example.php` to `./eoa.ee/credentials.php`.
+3. Run `docker compose up -d`.
