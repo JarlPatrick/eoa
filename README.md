@@ -57,26 +57,3 @@ its database variables for a MariaDB instance accessible from your host (the
 Compose database does not publish a host port). Run `uv run fastapi dev` in
 `api/`, then `npm ci && API_INTERNAL_URL=http://localhost:8000 npm run dev` in
 `web/`.
-
-## Legacy site migration
-
-The PHP site formerly in `eoa.ee/` has been retired. Its database queries now
-live in `api/`, and its public pages are implemented in `web/`:
-
-| Legacy page | Replacement |
-| --- | --- |
-| Home and contest navigation | `/` and `/contests` |
-| `?id=…` result tables, tasks, and descriptions | `/results/[id]` |
-| `?name=…` name search | `/search?q=…` |
-| `?name_id=…` participation and mentoring profiles | `/people/[id]` |
-| `?kool=true` school rankings | `/schools` |
-| `?hof=true` honor roll | `/people` |
-| `?school_id=…` school students and mentors | `/schools/[id]` |
-
-The home page redirects the old query parameters to their replacements, and
-`/index.php` redirects to `/`. Rankings and navigation use the new site's
-presentation and scoring. The Google site verification token is retained in
-the root layout. The legacy PDF and its metadata reference were removed;
-document references will be reworked separately.
-The old `esialgsed.php` spreadsheet helpers had no route or callers in the PHP
-site and were removed with the unused PHP runtime, CSS, and JavaScript.
