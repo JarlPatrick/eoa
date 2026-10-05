@@ -8,6 +8,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Eesti Olümpiaadide Andmebaas", template: "%s | EOA" },
   description: "Eesti olümpiaadide tulemused, osalejad ja koolid.",
+  verification: { google: "m3yEMb5b8lxEu4ueaXfeF4SYYjskkfaMiyVRUtXvEHE" },
 };
 
 export default function RootLayout({
