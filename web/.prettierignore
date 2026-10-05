@@ -1,0 +1,7 @@
+.next/
+node_modules/
+out/
+build/
+next-env.d.ts
+package-lock.json
+public/files/

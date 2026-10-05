@@ -29,5 +29,16 @@ For help contact <eoakontakt@gmail.com>.
 ## Local deployment using Docker Compose
 
 1. Copy `.env.example` to `.env` and add required variables.
-2. Copy `./eoa.ee/credentials.example.php` to `./eoa.ee/credentials.php`.
-3. Run `docker compose up -d`.
+2. Run `docker compose up --build -d --remove-orphans`.
+3. Open `http://localhost:8080` (or the port set by `WEB_PORT`).
+
+The public site runs in `web/` (Next.js). It calls the FastAPI service in `api/`
+over the private Docker network. The documented contest, people, and school API
+endpoints are exposed through the site at `/api/*`; site and statistics endpoints
+stay internal. MariaDB keeps the existing data volume. To roll back a release,
+restore the prior images and Compose configuration without replacing that volume.
+
+For local frontend development, copy `api/.env.example` to `api/.env` and set
+its database variables for the local MariaDB port. Run `uv run fastapi dev` in
+`api/`, then `npm ci && API_INTERNAL_URL=http://localhost:8000 npm run dev` in
+`web/`.

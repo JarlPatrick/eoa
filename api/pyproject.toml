@@ -1,0 +1,76 @@
+[project]
+name = "eoa-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.20.0,<2",
+    "fastapi[standard]>=0.141.1,<0.142",
+    "pymysql>=1.2.3,<2",
+    "python-dotenv>=1.2.3,<2",
+    "sqlalchemy>=2.1.1,<2.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1,<10",
+    "ruff>=0.16.9,<0.17",
+    "sqlacodegen>=4.0.4,<5",
+    "ty>=0.0.84,<0.1",
+]
+
+[tool.ruff.lint]
+ignore = [
+    "CPY001",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "EM101",
+    "TRY003",
+
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",   # tab-indentation
+    "E111",   # indentation-with-invalid-multiple
+    "E114",   # indentation-with-invalid-multiple-comment
+    "E117",   # over-indented
+    "D206",   # docstring-tab-indentation
+    "D300",   # triple-single-quotes
+    "Q000",   # bad-quotes-inline-string
+    "Q001",   # bad-quotes-multiline-string
+    "Q002",   # bad-quotes-docstring
+    "Q003",   # avoidable-escaped-quote
+    "COM812", # missing-trailing-comma
+    "COM819", # prohibited-trailing-comma
+    "E501",   # line-too-long
+]
+select = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"migrations/*" = ["INP001", "ERA001"]
+"migrations/env.py" = ["F401"] # Import registers models with Alembic metadata.
+"migrations/versions/*" = ["ALL"]
+"tests/*" = ["S101", "PLR2004"]
+"tests/conftest.py" = ["PLC0415"] # Fixtures import after adjusting sys.path.
+"app/models/contest.py" = ["TC003"] # SQLAlchemy evaluates mapped annotations.
+"app/models/{school,subject,type,year}.py" = ["RUF012"] # SQLAlchemy uses mutable table metadata.
+"app/schemas/contest.py" = ["TC003"] # Pydantic resolves date annotations at runtime.
+"app/routes/*.py" = ["TC002"] # FastAPI evaluates dependency annotations.
+"app/routes/people.py" = ["PLR0913"] # Public query parameters define the route API.
+"app/routes/site.py" = ["PLR0913", "PLR0917"] # Public query parameters define the route API.
+
+[tool.ruff.format]
+docstring-code-format = true
