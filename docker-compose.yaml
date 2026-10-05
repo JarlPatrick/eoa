@@ -12,8 +12,8 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./backups/initdb:/docker-entrypoint-initdb.d:ro
-    ports:
-      - "${DB_PORT:-3306}:3306"
+    expose:
+      - "3306"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -23,6 +23,8 @@ services:
   api:
     build: ./api
     restart: unless-stopped
+    expose:
+      - "8000"
     environment:
       DB_CONNECTION: mariadb
       DB_HOST: mariadb
@@ -52,8 +54,10 @@ services:
       PUBLIC_ID_SECRET: ${PUBLIC_ID_SECRET}
       PORT: 3000
       HOSTNAME: 0.0.0.0
+    expose:
+      - "3000"
     ports:
-      - "${WEB_PORT:-8080}:3000"
+      - "127.0.0.1:${WEB_PORT:-0}:3000"
     depends_on:
       api:
         condition: service_healthy
