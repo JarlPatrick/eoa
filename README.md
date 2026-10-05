@@ -29,5 +29,31 @@ For help contact <eoakontakt@gmail.com>.
 ## Local deployment using Docker Compose
 
 1. Copy `.env.example` to `.env` and add required variables.
-2. Copy `./eoa.ee/credentials.example.php` to `./eoa.ee/credentials.php`.
-3. Run `docker compose up -d`.
+2. Run `docker compose up` (or `docker compose up --build -d --remove-orphans`
+   to rebuild and run in the background).
+3. Open `http://localhost:8080` (or the port set by `WEB_PORT`).
+
+The example environment sets `WEB_PORT=8080` for local convenience. If
+`WEB_PORT` is unset, empty, or `0`, Docker assigns an available localhost port;
+find it with `docker compose port web 3000`.
+
+The public site runs in `web/` (Next.js). It calls the FastAPI service in `api/`
+over the private Docker network. The documented contest, people, and school API
+endpoints are exposed through the site at `/api/*`; site and statistics endpoints
+stay internal. The web port is published only on `127.0.0.1`; MariaDB and FastAPI
+are available only within the Compose network. On a fresh database volume,
+MariaDB imports the snapshot from `backups/initdb/` automatically. Subsequent
+deployments keep the existing data volume. To roll back a release,
+restore the prior images and Compose configuration without replacing that volume.
+
+The same Compose file can be deployed through Dokploy: select
+`docker-compose.yaml`, configure the variables from `.env.example`, and attach
+the demo domain to service `web` on container port `3000`. Dokploy manages the
+proxy network and routing. Omit `WEB_PORT` or set it to `0` in Dokploy to avoid
+fixed host-port conflicts between deployments.
+
+For local frontend development, copy `api/.env.example` to `api/.env` and set
+its database variables for a MariaDB instance accessible from your host (the
+Compose database does not publish a host port). Run `uv run fastapi dev` in
+`api/`, then `npm ci && API_INTERNAL_URL=http://localhost:8000 npm run dev` in
+`web/`.
